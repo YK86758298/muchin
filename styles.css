@@ -2625,3 +2625,21 @@ footer {
   padding-bottom:16px;
   border-bottom:1px solid var(--line);
 }
+
+/* Keep admin page content clear of the fixed header */
+body.admin-page,
+.admin-page{
+  padding-top:76px;
+}
+@media(max-width:900px){
+  body.admin-page,
+  .admin-page{
+    padding-top:68px;
+  }
+}
+@media(max-width:600px){
+  body.admin-page,
+  .admin-page{
+    padding-top:64px;
+  }
+}
