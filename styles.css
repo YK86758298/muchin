@@ -1,6 +1,746 @@
-:root{--ink:#151515;--muted:#6f6f6f;--line:#e7e7e7;--bg:#f7f7f5;--card:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-a{color:inherit;text-decoration:none}.header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:5}.logo{font-weight:800;letter-spacing:.12em}.header nav{display:flex;gap:24px;font-size:14px}
-.hero{min-height:520px;display:flex;align-items:center;padding:8%;background:linear-gradient(100deg,#e9e7df,#f8f8f6)}.hero h1{font-size:clamp(44px,7vw,84px);line-height:.95;margin:10px 0 20px}.eyebrow{letter-spacing:.2em;font-size:12px}.section{padding:70px 6%}.narrow{max-width:900px;margin:auto}.section-head{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}.product img{width:100%;aspect-ratio:1;object-fit:cover}.product-body{padding:18px}.product h3{margin:0 0 8px}.product p{color:var(--muted);min-height:40px}.btn{display:inline-block;border:0;background:#111;color:#fff;padding:13px 18px;border-radius:8px;cursor:pointer;margin-top:14px}.form{display:grid;gap:12px;margin:20px 0}.form input{padding:14px;border:1px solid #ccc;border-radius:8px;font-size:15px}.cart-row{display:flex;justify-content:space-between;align-items:center;background:#fff;border-bottom:1px solid var(--line);padding:18px 0}.remove{border:1px solid #ccc;background:#fff;padding:8px 12px;border-radius:7px}.order{padding:20px;margin:15px 0}footer{text-align:center;padding:40px;color:var(--muted)}
-#paypal-button-container{max-width:500px;margin-top:24px}#checkout-message{font-weight:600;margin-top:20px}
+:root {
+--ink: #20201d;
+--soft-ink: #4d4b45;
+--muted: #77736b;
+--cream: #f5f2eb;
+--warm: #ebe6dc;
+--white: #ffffff;
+--line: #dedbd4;
+}
+
+* {
+  box-sizing: border-box;
+  }
+
+html {
+scroll-behavior: smooth;
+}
+
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+color: var(--ink);
+background: var(--cream);
+line-height: 1.6;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header {
+height: 76px;
+padding: 0 5%;
+background: rgba(245, 242, 235, 0.96);
+border-bottom: 1px solid var(--line);
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+position: sticky;
+top: 0;
+z-index: 20;
+}
+
+.logo {
+font-size: 18px;
+font-weight: 700;
+letter-spacing: 0.18em;
+}
+
+.main-nav {
+display: flex;
+gap: 36px;
+font-size: 13px;
+letter-spacing: 0.04em;
+}
+
+.main-nav a,
+.cart-link {
+transition: opacity 0.2s ease;
+}
+
+.main-nav a:hover,
+.cart-link:hover {
+opacity: 0.55;
+}
+
+.cart-link {
+font-size: 13px;
+}
+
+/* =========================
+HERO
+========================= */
+
+.hero {
+min-height: 680px;
+padding: 8%;
+
+display: flex;
+align-items: center;
+
+background:
+linear-gradient(
+90deg,
+rgba(245,242,235,0.98) 0%,
+rgba(245,242,235,0.85) 38%,
+rgba(245,242,235,0.2) 75%
+),
+url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=2000&q=85")
+center / cover;
+}
+
+.hero-content {
+max-width: 620px;
+}
+
+.eyebrow {
+margin: 0 0 18px;
+
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+}
+
+.hero h1 {
+margin: 0 0 28px;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: clamp(48px, 6vw, 82px);
+font-weight: 400;
+line-height: 1.02;
+letter-spacing: -0.035em;
+}
+
+.hero-text {
+max-width: 470px;
+margin: 0 0 30px;
+
+font-size: 16px;
+color: var(--soft-ink);
+}
+
+.hero-button {
+display: inline-block;
+
+padding: 14px 24px;
+
+background: var(--ink);
+color: white;
+
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+
+transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hero-button:hover {
+transform: translateY(-2px);
+opacity: 0.85;
+}
+
+/* =========================
+GENERAL SECTIONS
+========================= */
+
+.category-section,
+.products-section,
+.occasion-section,
+.benefits-section {
+padding: 100px 6%;
+}
+
+.section-intro {
+margin-bottom: 42px;
+}
+
+.section-intro h2 {
+margin: 0;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: clamp(36px, 4vw, 54px);
+font-weight: 400;
+line-height: 1.05;
+letter-spacing: -0.03em;
+}
+
+.center {
+text-align: center;
+}
+
+/* =========================
+CATEGORY
+========================= */
+
+.category-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 22px;
+}
+
+.category-card {
+background: var(--white);
+overflow: hidden;
+}
+
+.category-image {
+height: 420px;
+background-position: center;
+background-size: cover;
+
+transition: transform 0.5s ease;
+}
+
+.category-card:hover .category-image {
+transform: scale(1.03);
+}
+
+.category-napkins {
+background-image:
+url("https://images.unsplash.com/photo-1583845112203-454c1b4f8f37?auto=format&fit=crop&w=1000&q=85");
+}
+
+.category-cups {
+background-image:
+url("https://images.unsplash.com/photo-1572119865084-43c285814d63?auto=format&fit=crop&w=1000&q=85");
+}
+
+.category-plates {
+background-image:
+url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=1000&q=85");
+}
+
+.category-info {
+padding: 22px 22px 26px;
+}
+
+.category-info h3 {
+margin: 0 0 5px;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: 25px;
+font-weight: 400;
+}
+
+.category-info span {
+color: var(--muted);
+font-size: 12px;
+}
+
+/* =========================
+PRODUCTS
+========================= */
+
+.products-section {
+background: var(--white);
+}
+
+.products-heading {
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+gap: 40px;
+}
+
+.section-description {
+max-width: 360px;
+margin: 0;
+
+color: var(--muted);
+font-size: 14px;
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 22px;
+}
+
+.card {
+background: var(--cream);
+border: 0;
+border-radius: 0;
+overflow: hidden;
+}
+
+.product img {
+width: 100%;
+aspect-ratio: 1 / 1.08;
+object-fit: cover;
+display: block;
+
+transition: transform 0.5s ease;
+}
+
+.product:hover img {
+transform: scale(1.025);
+}
+
+.product-body {
+padding: 20px 18px 22px;
+}
+
+.product h3 {
+margin: 0 0 5px;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: 20px;
+font-weight: 400;
+}
+
+.product p {
+min-height: 0;
+margin: 0 0 12px;
+
+color: var(--muted);
+font-size: 13px;
+}
+
+.product strong {
+font-size: 14px;
+font-weight: 600;
+}
+
+.product .btn {
+display: block;
+width: 100%;
+
+margin-top: 16px;
+
+border: 1px solid var(--ink);
+border-radius: 0;
+
+background: transparent;
+color: var(--ink);
+
+padding: 11px;
+
+text-align: center;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+
+transition: all 0.2s ease;
+}
+
+.product .btn:hover {
+background: var(--ink);
+color: white;
+}
+
+/* =========================
+STORY
+========================= */
+
+.story-section {
+display: grid;
+grid-template-columns: 1fr 1fr;
+min-height: 650px;
+}
+
+.story-image {
+background:
+url("https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1500&q=85")
+center / cover;
+}
+
+.story-content {
+padding: 10%;
+background: var(--warm);
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.story-content h2 {
+max-width: 550px;
+
+margin: 0 0 28px;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: clamp(38px, 4vw, 58px);
+font-weight: 400;
+line-height: 1.05;
+}
+
+.story-content p {
+max-width: 500px;
+
+color: var(--soft-ink);
+font-size: 15px;
+}
+
+.text-link {
+margin-top: 20px;
+
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+/* =========================
+OCCASIONS
+========================= */
+
+.occasion-section {
+background: var(--cream);
+}
+
+.occasion-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 22px;
+}
+
+.occasion-card {
+position: relative;
+height: 460px;
+overflow: hidden;
+background: var(--warm);
+}
+
+.occasion-bg {
+width: 100%;
+height: 100%;
+
+background-position: center;
+background-size: cover;
+
+transition: transform 0.5s ease;
+}
+
+.occasion-card:hover .occasion-bg {
+transform: scale(1.04);
+}
+
+.occasion-one {
+background-image:
+url("https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=85");
+}
+
+.occasion-two {
+background-image:
+url("https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=85");
+}
+
+.occasion-three {
+background-image:
+url("https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=1200&q=85");
+}
+
+.occasion-label {
+position: absolute;
+left: 28px;
+bottom: 28px;
+
+color: white;
+
+text-shadow: 0 2px 15px rgba(0,0,0,.3);
+}
+
+.occasion-label span {
+font-size: 11px;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+}
+
+.occasion-label h3 {
+margin: 4px 0 0;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: 28px;
+font-weight: 400;
+}
+
+/* =========================
+BENEFITS
+========================= */
+
+.benefits-section {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 60px;
+
+background: var(--white);
+border-top: 1px solid var(--line);
+}
+
+.benefit-number {
+margin-bottom: 30px;
+
+color: var(--muted);
+font-size: 11px;
+letter-spacing: 0.12em;
+}
+
+.benefit h3 {
+margin: 0 0 12px;
+
+font-family: Georgia, "Times New Roman", serif;
+font-size: 25px;
+font-weight: 400;
+}
+
+.benefit p {
+max-width: 300px;
+
+margin: 0;
+
+color: var(--muted);
+font-size: 14px;
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer {
+padding: 70px 6% 30px;
+
+background: #20201d;
+color: white;
+}
+
+.footer-top {
+display: grid;
+grid-template-columns: 2fr 1fr 1fr 1fr;
+gap: 50px;
+
+padding-bottom: 70px;
+}
+
+.footer-logo {
+font-size: 17px;
+font-weight: 700;
+letter-spacing: 0.18em;
+}
+
+.footer-top p {
+color: #aaa79f;
+font-size: 13px;
+}
+
+.footer-column {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.footer-column h4 {
+margin: 0 0 8px;
+
+font-size: 11px;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+}
+
+.footer-column a {
+color: #aaa79f;
+font-size: 13px;
+}
+
+.footer-column a:hover {
+color: white;
+}
+
+.footer-bottom {
+display: flex;
+justify-content: space-between;
+
+padding-top: 25px;
+
+border-top: 1px solid #41413d;
+
+color: #85827b;
+font-size: 11px;
+}
+
+/* =========================
+CART / CHECKOUT
+========================= */
+
+.form {
+display: grid;
+gap: 12px;
+margin: 20px 0;
+}
+
+.form input {
+padding: 14px;
+
+border: 1px solid #ccc;
+border-radius: 0;
+
+background: white;
+font-size: 15px;
+}
+
+.cart-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+padding: 20px 0;
+
+border-bottom: 1px solid var(--line);
+background: transparent;
+}
+
+.remove {
+padding: 8px 12px;
+
+border: 1px solid #bbb;
+border-radius: 0;
+
+background: transparent;
+}
+
+.order {
+padding: 20px;
+margin: 15px 0;
+}
+
+#paypal-button-container {
+max-width: 500px;
+margin-top: 24px;
+}
+
+#checkout-message {
+margin-top: 20px;
+font-weight: 600;
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+.main-nav {
+display: none;
+}
+
+.hero {
+min-height: 600px;
+padding: 10% 7%;
+}
+
+.category-grid,
+.occasion-grid,
+.grid {
+grid-template-columns: repeat(2, 1fr);
+}
+
+.story-section {
+grid-template-columns: 1fr;
+}
+
+.story-image {
+min-height: 500px;
+}
+
+.benefits-section {
+grid-template-columns: 1fr;
+gap: 40px;
+}
+
+.footer-top {
+grid-template-columns: 1fr 1fr;
+}
+}
+
+@media (max-width: 600px) {
+
+.header {
+height: 65px;
+padding: 0 5%;
+}
+
+.logo {
+font-size: 14px;
+}
+
+.hero {
+min-height: 600px;
+
+```
+background:
+  linear-gradient(
+    180deg,
+    rgba(245,242,235,0.88),
+    rgba(245,242,235,0.65)
+  ),
+  url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=1200&q=85")
+  center / cover;
+```
+
+}
+
+.hero h1 {
+font-size: 48px;
+}
+
+.category-section,
+.products-section,
+.occasion-section,
+.benefits-section {
+padding: 70px 5%;
+}
+
+.category-grid,
+.occasion-grid,
+.grid {
+grid-template-columns: 1fr;
+}
+
+.category-image {
+height: 360px;
+}
+
+.products-heading {
+display: block;
+}
+
+.section-description {
+margin-top: 20px;
+}
+
+.story-image {
+min-height: 400px;
+}
+
+.story-content {
+padding: 70px 8%;
+}
+
+.occasion-card {
+height: 400px;
+}
+
+.footer-top {
+grid-template-columns: 1fr 1fr;
+gap: 40px 20px;
+}
+
+.footer-bottom {
+display: block;
+}
+
+.footer-bottom span {
+display: block;
+margin-bottom: 8px;
+}
+}
