@@ -108,6 +108,8 @@
     </div>
   </section>
 
+<button class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
 </main>
 
 <footer>
@@ -182,5 +184,19 @@
 })();
 </script>
 
+<script>
+(function(){
+  const button=document.querySelector('.back-to-top');
+  if(!button) return;
+  function update(){
+    button.classList.toggle('is-visible', window.scrollY > 500);
+  }
+  button.addEventListener('click',function(){
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  window.addEventListener('scroll',update,{passive:true});
+  update();
+})();
+</script>
 </body>
 </html>
