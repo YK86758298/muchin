@@ -2522,3 +2522,9 @@ footer {
     white-space:normal;
   }
 }
+
+/* Restore original brand advantages heading wrapping */
+.brand-advantage-intro h2{
+  max-width:390px;
+  white-space:normal;
+}
