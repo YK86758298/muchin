@@ -2545,3 +2545,40 @@ footer {
   grid-template-columns:1.22fr repeat(3,1fr);
   gap:42px;
 }
+
+/* Floating back-to-top button */
+.back-to-top{
+  position:fixed;
+  right:28px;
+  bottom:28px;
+  z-index:999;
+  width:44px;
+  height:44px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:var(--white);
+  color:var(--ink);
+  font:20px/1 Arial,sans-serif;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(10px);
+  transition:opacity .25s ease,visibility .25s ease,transform .25s ease;
+}
+.back-to-top.is-visible{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+.back-to-top:hover{
+  border-color:var(--ink);
+}
+@media(max-width:600px){
+  .back-to-top{
+    right:18px;
+    bottom:18px;
+    width:40px;
+    height:40px;
+  }
+}
