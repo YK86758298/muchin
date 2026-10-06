@@ -2643,3 +2643,33 @@ body.admin-page,
     padding-top:64px;
   }
 }
+
+/* Cart product images */
+.cart-item-info{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  min-width:0;
+}
+.cart-item-image{
+  width:88px;
+  height:88px;
+  flex:0 0 88px;
+  object-fit:cover;
+  background:var(--cream);
+}
+.cart-item-details{
+  min-width:0;
+}
+.cart-item-details b{
+  display:block;
+  margin-bottom:6px;
+}
+@media(max-width:600px){
+  .cart-item-info{gap:12px}
+  .cart-item-image{
+    width:68px;
+    height:68px;
+    flex-basis:68px;
+  }
+}
