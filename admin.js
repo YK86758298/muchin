@@ -1,4 +1,3 @@
-```javascript
 const client = supabaseClient;
 
 let editingProductId = null;
@@ -609,4 +608,3 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 
 }
-```
