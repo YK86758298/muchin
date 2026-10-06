@@ -2390,6 +2390,42 @@ footer {
 }
 
 
+/* Product card alignment */
+.shop-product-grid .product{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.shop-product-grid .product-body{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.shop-product-grid .product h3{
+  min-height:2.7em;
+  margin-bottom:5px;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.shop-product-grid .product p{
+  min-height:3em;
+  margin-bottom:0;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.shop-product-grid .product strong{
+  display:block;
+  margin-top:auto;
+  padding-top:10px;
+}
+.shop-product-grid .product .btn{
+  margin-top:10px;
+}
+
 /* Scroll-aware header */
 .header {
   transition: transform 0.45s ease, opacity 0.45s ease;
