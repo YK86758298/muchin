@@ -2539,3 +2539,9 @@ footer {
 .products-section{
   padding-top:30px;
 }
+
+/* Subtle brand advantages spacing adjustment */
+.brand-advantages{
+  grid-template-columns:1.22fr repeat(3,1fr);
+  gap:42px;
+}
