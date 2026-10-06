@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nova Shop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html">NOVA SHOP</a>
+  <nav><a href="index.html">Shop</a><a href="cart.html">Cart <span id="cart-count">0</span></a><a href="admin.html">Admin</a></nav>
+</header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">NEW COLLECTION</p><h1>Simple products.<br>Better everyday.</h1><p>Replace this text with your brand story.</p><a class="btn" href="#products">Shop now</a></div>
+  </section>
+  <section id="products" class="section">
+    <div class="section-head"><h2>Featured products</h2><span id="product-status"></span></div>
+    <div id="product-grid" class="grid"></div>
+  </section>
+</main>
+<footer>© 2026 Nova Shop · Privacy · Terms · Contact</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

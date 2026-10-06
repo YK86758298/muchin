@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout - Nova Shop</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="header"><a class="logo" href="index.html">NOVA SHOP</a><nav><a href="cart.html">Cart <span id="cart-count">0</span></a></nav></header>
+<main class="section narrow">
+<h1>Checkout</h1>
+<form id="checkout-form" class="form">
+<input name="name" placeholder="Full name" required>
+<input name="email" type="email" placeholder="Email" required>
+<input name="address" placeholder="Shipping address" required>
+<input name="city" placeholder="City" required>
+<input name="country" placeholder="Country" required>
+</form>
+<div id="checkout-summary" class="card"></div>
+<div id="paypal-button-container"></div>
+<p id="checkout-message"></p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+document.write('<script src="https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(CONFIG.PAYPAL_CLIENT_ID)+'&currency=USD&components=buttons"><\/script>');
+</script>
+<script src="checkout.js"></script>
+</body></html>
