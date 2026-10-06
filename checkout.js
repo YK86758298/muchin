@@ -1,5 +1,5 @@
 async function checkoutInit(){
-  const cart=getCart(); const summary=document.getElementById("checkout-summary");
+  const cart=getCart(); const summary=document.getElementById("checkout-summary"); const {data:{session}}=await supabaseClient.auth.getSession(); if(!session){window.location.href="login.html?next=checkout.html";return;}
   if(!cart.length){summary.innerHTML="<p>Your cart is empty.</p>";return;}
   const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
   summary.innerHTML=`<h2>Order total: $${total.toFixed(2)}</h2>`+
@@ -10,7 +10,7 @@ async function checkoutInit(){
       const form=document.getElementById("checkout-form");
       if(!form.reportValidity()) throw new Error("Please complete your details.");
       const customer=Object.fromEntries(new FormData(form).entries());
-      const {data,error}=await supabaseClient.functions.invoke("create-paypal-order",{body:{cart,customer}});
+      const {data,error}=await supabaseClient.functions.invoke("create-paypal-order",{body:{cart,customer,user_id:session.user.id}});
       if(error) throw error; return data.id;
     },
     onApprove: async (data)=>{
