@@ -676,7 +676,6 @@ font-size: 14px;
 .hero {
 min-height: 600px;
 
-```
 background:
   linear-gradient(
     180deg,
@@ -685,8 +684,6 @@ background:
   ),
   url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=1200&q=85")
   center / cover;
-```
-
 }
 
 .hero h1 {
@@ -744,7 +741,6 @@ display: block;
 margin-bottom: 8px;
 }
 }
-```css
 /* ========================================
    ADMIN DASHBOARD
 ======================================== */
@@ -1251,4 +1247,80 @@ margin-bottom: 8px;
   }
 
 }
-```
+
+
+/* ========================================
+   PAGE LAYOUT & SPACING
+======================================== */
+
+.section {
+  width: min(1180px, calc(100% - 48px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.narrow {
+  max-width: 980px;
+}
+
+.page-heading {
+  padding: 80px 0 45px;
+}
+
+.page-heading h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.page-intro {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.btn {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  padding: 13px 20px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .section {
+    width: min(100% - 32px, 1180px);
+  }
+
+  .page-heading {
+    padding: 55px 0 32px;
+  }
+
+  .page-heading h1 {
+    font-size: 42px;
+  }
+
+  .hero {
+    padding-left: 7%;
+    padding-right: 7%;
+  }
+
+  .footer-top {
+    padding-bottom: 45px;
+  }
+}
