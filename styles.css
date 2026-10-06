@@ -2037,3 +2037,22 @@ footer {
 .order-items-list{display:grid;gap:0}.order-items-head,.order-item-row{display:grid;grid-template-columns:minmax(0,1fr) 120px 100px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}.order-items-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.order-item-row strong{text-align:right;font-weight:500}.order-item-row span:nth-child(2){text-align:right}.order-details-btn{border-color:#777}
 .account-order-main{display:flex;align-items:center;justify-content:space-between;gap:20px}.account-order-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.order-empty-detail{color:var(--muted);font-size:13px}
 @media(max-width:700px){.order-detail-grid{grid-template-columns:1fr}.order-items-head,.order-item-row{grid-template-columns:minmax(0,1fr) 90px 80px;gap:8px}.account-order-main{align-items:flex-start}.account-order-actions{justify-content:flex-start;margin-top:14px}.account-order-actions .small-btn{flex:0 0 auto}}
+
+
+/* Order history readability */
+.order-details{margin-top:28px;padding-top:28px}
+.order-detail-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-bottom:28px}
+.order-detail-grid div{gap:8px;min-width:0}
+.order-detail-grid small{font-size:10px;line-height:1.4}
+.order-detail-grid span{font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.order-items-list{margin-top:6px}
+.order-items-head,.order-item-row{grid-template-columns:minmax(0,1fr) 150px 120px;gap:24px;padding:15px 0;font-size:14px;line-height:1.6}
+.order-items-head{font-size:10px;line-height:1.4}
+.order-item-row span:nth-child(2),.order-item-row strong{white-space:nowrap}
+.reorder-btn{border-color:var(--ink)}
+@media(max-width:700px){
+  .order-details{margin-top:24px;padding-top:24px}
+  .order-detail-grid{grid-template-columns:1fr;gap:20px}
+  .order-items-head,.order-item-row{grid-template-columns:minmax(0,1fr) 86px 82px;gap:10px;padding:13px 0;font-size:13px}
+  .order-item-row span:nth-child(2),.order-item-row strong{font-size:12px}
+}
