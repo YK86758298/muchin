@@ -16,7 +16,7 @@ async function checkoutInit(){
     onApprove: async (data)=>{
       const {data:result,error}=await supabaseClient.functions.invoke("capture-paypal-order",{body:{paypal_order_id:data.orderID}});
       if(error) throw error;
-      localStorage.removeItem(CART_KEY);
+      localStorage.removeItem(CART_KEY); updateCartCount();
       document.getElementById("checkout-message").textContent="Payment successful. Order received.";
       window.scrollTo(0,0);
     },
