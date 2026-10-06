@@ -2588,3 +2588,9 @@ footer {
   grid-template-columns:1.26fr repeat(3,1fr);
   gap:38px;
 }
+
+/* Brand advantages: more room for intro, tighter benefit columns */
+.brand-advantages{
+  grid-template-columns:1.38fr repeat(3,1fr);
+  gap:28px;
+}
