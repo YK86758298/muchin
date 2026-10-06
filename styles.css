@@ -62,17 +62,21 @@ letter-spacing: 0.04em;
 }
 
 .main-nav a,
+.account-link,
 .cart-link {
 transition: opacity 0.2s ease;
 }
 
 .main-nav a:hover,
+.account-link:hover,
 .cart-link:hover {
 opacity: 0.55;
 }
 
+.account-link,
 .cart-link {
 font-size: 13px;
+white-space: nowrap;
 }
 
 /* =========================
