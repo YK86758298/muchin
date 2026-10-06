@@ -7,258 +7,105 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/png" href="favicon.png">
 </head>
-
 <body>
-
 <header class="header">
   <a class="logo" href="index.html">MUCHIN</a>
-  <nav class="main-nav"><a href="index.html">Home</a><a href="index.html#products">Shop</a><a href="#orders">Orders</a></nav><div class="header-actions"><a href="index.html#products" class="cart-link">View store</a></div>
+  <nav class="main-nav"><a href="index.html">Home</a><a href="index.html#products">Shop</a><a href="#orders">Orders</a></nav>
+  <div class="header-actions"><a href="index.html#products" class="cart-link">View store</a></div>
 </header>
 
 <main class="section admin-page">
-
-  <!-- LOGIN -->
   <div id="login-box" class="admin-login-wrap">
-
-    <div class="page-heading">
-      <p class="eyebrow">Private Area</p>
-      <h1>Admin</h1>
-      <p class="page-intro">Manage your products and orders.</p>
-    </div>
-
+    <div class="page-heading"><p class="eyebrow">Private Area</p><h1>Admin</h1><p class="page-intro">Manage your products and orders.</p></div>
     <div class="card admin-login">
       <form id="login-form" class="form">
-
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Admin email"
-          required
-        >
-
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          required
-        >
-
-        <button class="btn" type="submit">
-          Sign in
-        </button>
-
+        <label for="email">Email</label><input id="email" type="email" placeholder="Admin email" required>
+        <label for="password">Password</label><input id="password" type="password" placeholder="Password" required>
+        <button class="btn" type="submit">Sign in</button>
       </form>
     </div>
-
   </div>
 
-
-  <!-- ADMIN CONTENT -->
   <div id="admin-content" style="display:none;">
-
     <div class="admin-topbar">
-
-      <div>
-        <p class="eyebrow">Management</p>
-        <h1>Store Dashboard</h1>
-      </div>
-
-      <button id="logout-btn" class="btn btn-outline">
-        Log out
-      </button>
-
+      <div><p class="eyebrow">Management</p><h1>Store Dashboard</h1></div>
+      <button id="logout-btn" class="btn btn-outline">Log out</button>
     </div>
-
-
-    <!-- DASHBOARD -->
 
     <div class="admin-stats">
-
-      <div class="card admin-stat">
-        <span>Products</span>
-        <strong id="product-count">0</strong>
-      </div>
-
-      <div class="card admin-stat">
-        <span>Orders</span>
-        <strong id="order-count">0</strong>
-      </div>
-
+      <div class="card admin-stat"><span>Products</span><strong id="product-count">0</strong></div>
+      <div class="card admin-stat"><span>Orders</span><strong id="order-count">0</strong></div>
     </div>
 
-
-    <!-- PRODUCTS -->
-
-    <section class="admin-section">
-
+    <section class="admin-section" id="catalog">
       <div class="admin-section-header">
-
-        <div>
-          <p class="eyebrow">Catalog</p>
-          <h2>Products</h2>
-        </div>
-
-        <button id="add-product-btn" class="btn">
-          + Add Product
-        </button>
-
+        <div><p class="eyebrow">Catalog</p><h2>Products</h2></div>
+        <button id="add-product-btn" class="btn">+ Add Product</button>
       </div>
-
-
-      <!-- PRODUCT FORM -->
 
       <div id="product-form-box" class="card admin-product-form" style="display:none;">
-
-        <div class="admin-form-heading">
-          <div>
-            <p class="eyebrow">Product</p>
-            <h3 id="product-form-title">Add Product</h3>
-          </div>
-
-          <button id="cancel-product-btn" class="text-button">
-            Cancel
-          </button>
-        </div>
-
+        <div class="admin-form-heading"><div><p class="eyebrow">Product</p><h3 id="product-form-title">Add Product</h3></div><button id="cancel-product-btn" class="text-button">Cancel</button></div>
 
         <form id="product-form" class="form">
-
           <input type="hidden" id="product-id">
 
+          <label for="product-name">Product name</label>
+          <input id="product-name" type="text" placeholder="Example: Floral Garden Napkin" required>
 
-          <label for="product-name">
-            Product name
-          </label>
-
-          <input
-            id="product-name"
-            type="text"
-            placeholder="Example: Floral Garden Napkin"
-            required
-          >
-
-
-          <label for="product-description">
-            Description
-          </label>
-
-          <textarea
-            id="product-description"
-            rows="5"
-            placeholder="Describe your product..."
-          ></textarea>
-
+          <label for="product-description">Description</label>
+          <textarea id="product-description" rows="5" placeholder="Describe your product..."></textarea>
 
           <div class="form-row">
-
-            <div>
-              <label for="product-price">
-                Price (USD)
-              </label>
-
-              <input
-                id="product-price"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="8.90"
-                required
-              >
-            </div>
-
-
-            <div>
-              <label for="product-stock">
-                Stock
-              </label>
-
-              <input
-                id="product-stock"
-                type="number"
-                min="0"
-                step="1"
-                placeholder="100"
-                required
-              >
-            </div>
-
+            <div><label for="product-price">Price (USD)</label><input id="product-price" type="number" min="0" step="0.01" placeholder="8.90" required></div>
+            <div><label for="product-stock">Stock</label><input id="product-stock" type="number" min="0" step="1" placeholder="100" required></div>
           </div>
 
+          <label for="product-category">Category</label>
+          <select id="product-category">
+            <option value="Paper Napkin">Paper Napkin</option>
+            <option value="Paper Cup">Paper Cup</option>
+            <option value="Paper Plate">Paper Plate</option>
+            <option value="Paper Bag">Paper Bag</option>
+            <option value="Paper Tablecloth">Paper Tablecloth</option>
+            <option value="Plastic Tablecloth">Plastic Tablecloth</option>
+            <option value="Paper Banner">Paper Banner</option>
+            <option value="Paper Hat">Paper Hat</option>
+            <option value="Other">Other</option>
+          </select>
 
-          <label for="product-image">
-            Image URL
-          </label>
+          <label for="product-image">Image URL</label>
+          <input id="product-image" type="url" placeholder="https://...">
 
-          <input
-            id="product-image"
-            type="url"
-            placeholder="https://..."
-          >
+          <label class="checkbox-row"><input id="product-best-seller" type="checkbox"><span>Show in Best Sellers</span></label>
+          <label class="checkbox-row"><input id="product-active" type="checkbox" checked><span>Product is active and visible in the store</span></label>
 
-
-          <label class="checkbox-row">
-
-            <input
-              id="product-active"
-              type="checkbox"
-              checked
-            >
-
-            <span>Product is active and visible in the store</span>
-
-          </label>
-
-
-          <button class="btn" type="submit">
-            Save Product
-          </button>
-
+          <button class="btn" type="submit">Save Product</button>
           <p id="product-form-message"></p>
-
         </form>
-
       </div>
-
-
-      <!-- PRODUCT LIST -->
 
       <div id="products-admin"></div>
-
     </section>
-    <!-- ORDERS -->
 
-    <section class="admin-section">
-
-      <div class="admin-section-header">
-
-        <div>
-          <p class="eyebrow">Sales</p>
-          <h2>Orders</h2>
-        </div>
-
-      </div>
-
+    <section class="admin-section" id="orders">
+      <div class="admin-section-header"><div><p class="eyebrow">Sales</p><h2>Orders</h2></div></div>
       <div id="orders"></div>
-
     </section>
-
   </div>
-
 </main>
+
 <footer>
   <div class="footer-top">
     <div><a class="footer-logo" href="index.html">MUCHIN</a><p>Store management for Muchin.</p></div>
     <div class="footer-column"><h4>Store</h4><a href="index.html">Home</a><a href="index.html#products">Products</a></div>
-    <div class="footer-column"><h4>Management</h4><a href="#products-admin">Products</a><a href="#orders">Orders</a></div>
-    <div class="footer-column"><h4>Account</h4><a href="#" id="admin-footer-store">View store</a></div>
+    <div class="footer-column"><h4>Management</h4><a href="#catalog">Products</a><a href="#orders">Orders</a></div>
+    <div class="footer-column"><h4>Account</h4><a href="index.html#products">View store</a></div>
   </div>
   <div class="footer-bottom"><span>© 2026 Muchin. All rights reserved.</span><span>Private management area.</span></div>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="admin.js"></script>
-
 </body>
 </html>
