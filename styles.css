@@ -73,10 +73,31 @@ transition: opacity 0.2s ease;
 opacity: 0.55;
 }
 
-.account-link,
-.cart-link {
+.header-actions {
+display: flex;
+align-items: center;
+gap: 20px;
+}
+
+.header-actions a {
+font-family: Arial, Helvetica, sans-serif;
 font-size: 13px;
+font-weight: 400;
+line-height: 1;
+letter-spacing: 0.04em;
 white-space: nowrap;
+}
+
+.cart-link {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+}
+
+#cart-count {
+display: inline-block;
+min-width: 12px;
+text-align: center;
 }
 
 /* =========================
@@ -1570,6 +1591,10 @@ select {
   .header {
     height: 64px;
     padding: 0 18px;
+  }
+
+  .header-actions {
+    gap: 14px;
   }
 
   .logo {
