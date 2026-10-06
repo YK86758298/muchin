@@ -1,8 +1,107 @@
+```html
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cart - Nova Shop</title><link rel="stylesheet" href="styles.css"></head>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cart — MAISON TABLE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
 <body>
-<header class="header"><a class="logo" href="index.html">NOVA SHOP</a><nav><a href="index.html">Shop</a><a href="cart.html">Cart <span id="cart-count">0</span></a></nav></header>
-<main class="section narrow"><h1>Your cart</h1><div id="cart"></div><div id="cart-total"></div><a class="btn" href="checkout.html">Checkout</a></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
-</body></html>
+
+<header class="header">
+
+  <a class="logo" href="index.html">
+    MAISON TABLE
+  </a>
+
+  <nav>
+    <a href="index.html">Shop</a>
+    <a href="index.html#collections">Collections</a>
+    <a href="index.html#story">Our Story</a>
+    <a href="cart.html">
+      Cart <span id="cart-count">0</span>
+    </a>
+  </nav>
+
+</header>
+
+
+<main class="section narrow cart-page">
+
+  <div class="page-heading">
+    <p class="eyebrow">Your Selection</p>
+    <h1>Your cart</h1>
+    <p class="page-intro">
+      Review your selection before continuing to checkout.
+    </p>
+  </div>
+
+
+  <div class="cart-layout">
+
+    <div class="cart-items">
+      <div id="cart"></div>
+    </div>
+
+
+    <aside class="cart-summary card">
+
+      <p class="eyebrow">Order Summary</p>
+
+      <h2>Cart total</h2>
+
+      <div id="cart-total"></div>
+
+      <a class="btn btn-full" href="checkout.html">
+        Proceed to checkout
+      </a>
+
+      <a class="continue-shopping" href="index.html">
+        ← Continue shopping
+      </a>
+
+      <div class="cart-note">
+        <p>
+          Secure checkout with PayPal.
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+
+</main>
+
+
+<footer class="footer">
+  <div class="footer-inner">
+
+    <div>
+      <div class="footer-logo">MAISON TABLE</div>
+      <p>Beautiful details for everyday tables.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="index.html">Shop</a>
+      <a href="index.html#story">Our Story</a>
+      <a href="checkout.html">Checkout</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 MAISON TABLE. All rights reserved.
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
+```
