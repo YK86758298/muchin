@@ -11,9 +11,7 @@
 
 <header class="header">
   <a class="logo" href="index.html">MUCHIN</a>
-  <nav>
-    <a href="index.html">Store</a>
-  </nav>
+  <nav class="main-nav"><a href="index.html">Store</a></nav><div class="header-actions"><a href="index.html#products" class="cart-link">View store</a></div>
 </header>
 
 <main class="section admin-page">
@@ -249,8 +247,15 @@
   </div>
 
 </main>
-
-
+<footer>
+  <div class="footer-top">
+    <div><a class="footer-logo" href="index.html">MUCHIN</a><p>Store management for Muchin.</p></div>
+    <div class="footer-column"><h4>Store</h4><a href="index.html">Home</a><a href="index.html#products">Products</a></div>
+    <div class="footer-column"><h4>Management</h4><a href="#products-admin">Products</a><a href="#orders">Orders</a></div>
+    <div class="footer-column"><h4>Account</h4><a href="#" id="admin-footer-store">View store</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Muchin. All rights reserved.</span><span>Private management area.</span></div>
+</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="admin.js"></script>
