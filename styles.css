@@ -2211,3 +2211,180 @@ footer {
     grid-column:auto;
   }
 }
+
+/* ========================================
+   HOMEPAGE REFINED SHOP / STORY / ADVANTAGES
+======================================== */
+.shop-switcher{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  margin-bottom:42px;
+  border-bottom:1px solid var(--line);
+}
+.shop-tab{
+  appearance:none;
+  border:0;
+  border-bottom:2px solid transparent;
+  background:transparent;
+  color:var(--muted);
+  padding:12px 18px 14px;
+  margin-bottom:-1px;
+  font:inherit;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:color .2s ease,border-color .2s ease;
+}
+.shop-tab:hover,.shop-tab.is-active{
+  color:var(--ink);
+  border-bottom-color:var(--ink);
+}
+.shop-current-heading{
+  margin-bottom:24px;
+  padding-bottom:14px;
+}
+.shop-current-heading h3{
+  font-size:28px;
+}
+.shop-pagination{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.08em;
+}
+.shop-page-btn{
+  appearance:none;
+  width:32px;
+  height:32px;
+  border:1px solid var(--line);
+  background:var(--white);
+  color:var(--ink);
+  cursor:pointer;
+  font:inherit;
+}
+.shop-page-btn:hover:not(:disabled){
+  border-color:var(--ink);
+}
+.shop-page-btn:disabled{
+  opacity:.3;
+  cursor:default;
+}
+.shop-empty{
+  grid-column:1 / -1;
+  padding:70px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+.shop-product-grid{
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:14px;
+}
+.shop-product-grid .product-body{
+  padding:13px 11px 14px;
+}
+.shop-product-grid .product h3{
+  font-size:14px;
+  line-height:1.35;
+}
+.shop-product-grid .product p{
+  font-size:11px;
+  line-height:1.5;
+  margin-bottom:7px;
+}
+.shop-product-grid .product strong{
+  font-size:12px;
+}
+.shop-product-grid .product .btn{
+  margin-top:10px;
+  padding:8px 5px;
+  font-size:9px;
+}
+.story-section{
+  grid-template-columns:1.55fr 1fr;
+  min-height:620px;
+}
+.story-content{
+  order:1;
+  padding:clamp(60px,8vw,120px);
+}
+.story-image{
+  order:2;
+  min-height:420px;
+}
+.story-content h2{
+  max-width:720px;
+  font-size:clamp(38px,4.4vw,64px);
+}
+.story-content p{
+  max-width:720px;
+  font-size:14px;
+  line-height:1.85;
+}
+.brand-advantages{
+  display:grid;
+  grid-template-columns:1.15fr repeat(3,1fr);
+  gap:60px;
+  padding-top:120px;
+  padding-bottom:120px;
+  background:var(--white);
+}
+.brand-advantage-intro h2{
+  max-width:390px;
+  font-size:clamp(34px,3.4vw,50px);
+  line-height:1.08;
+}
+.brand-advantages .benefit{
+  border-top:1px solid var(--line);
+  padding-top:22px;
+}
+.brand-advantages .benefit h3{
+  margin:0 0 16px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:23px;
+  font-weight:400;
+}
+.brand-advantages .benefit p{
+  margin:0;
+  max-width:260px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+@media(max-width:1200px){
+  .shop-product-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .shop-product-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .brand-advantages{grid-template-columns:1fr 1fr;gap:42px}
+  .brand-advantage-intro{grid-column:1 / -1}
+  .story-section{grid-template-columns:1.4fr 1fr}
+}
+@media(max-width:600px){
+  .shop-switcher{
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    margin-right:-20px;
+    padding-right:20px;
+    scrollbar-width:none;
+  }
+  .shop-switcher::-webkit-scrollbar{display:none}
+  .shop-tab{flex:0 0 auto;padding-left:14px;padding-right:14px}
+  .shop-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .shop-current-heading{
+    flex-direction:row;
+    align-items:flex-end;
+    gap:15px;
+  }
+  .shop-current-heading h3{font-size:25px}
+  .story-section{grid-template-columns:1fr;min-height:0}
+  .story-content{order:1;padding:58px 24px}
+  .story-image{order:2;height:32svh;min-height:240px}
+  .story-content h2{font-size:clamp(34px,9vw,46px)}
+  .brand-advantages{grid-template-columns:1fr;gap:38px;padding-top:76px;padding-bottom:76px}
+  .brand-advantage-intro{grid-column:auto}
+  .brand-advantages .benefit p{max-width:100%}
+}
