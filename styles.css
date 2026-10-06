@@ -2612,3 +2612,16 @@ footer {
     gap:38px;
   }
 }
+
+/* Brand advantage divider placement */
+.brand-advantages .benefit{
+  border-top:0;
+  border-bottom:0;
+  padding-top:0;
+  padding-bottom:0;
+}
+.brand-advantages .benefit h3{
+  margin-bottom:18px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--line);
+}
