@@ -1,28 +1,277 @@
 <!doctype html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Nova Shop</title>
+  <title>Maison Table | Modern Tableware</title>
+  <meta name="description" content="Beautiful paper tableware for everyday moments and special occasions.">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+
 <header class="header">
-  <a class="logo" href="index.html">NOVA SHOP</a>
-  <nav><a href="index.html">Shop</a><a href="cart.html">Cart <span id="cart-count">0</span></a><a href="admin.html">Admin</a></nav>
+  <a class="logo" href="index.html">
+    MAISON TABLE
+  </a>
+
+  <nav class="main-nav">
+    <a href="#products">Shop</a>
+    <a href="#collections">Collections</a>
+    <a href="#about">Our Story</a>
+  </nav>
+
+  <div class="header-actions">
+    <a href="cart.html" class="cart-link">
+      Cart <span id="cart-count">0</span>
+    </a>
+  </div>
 </header>
+
 <main>
+
+  <!-- HERO -->
+
   <section class="hero">
-    <div><p class="eyebrow">NEW COLLECTION</p><h1>Simple products.<br>Better everyday.</h1><p>Replace this text with your brand story.</p><a class="btn" href="#products">Shop now</a></div>
+    <div class="hero-content">
+      <p class="eyebrow">TABLEWARE FOR EVERY MOMENT</p>
+
+```
+  <h1>
+    Beautiful moments<br>
+    start at the table.
+  </h1>
+
+  <p class="hero-text">
+    Thoughtfully designed napkins, cups and plates
+    for everyday gatherings and special celebrations.
+  </p>
+
+  <a class="hero-button" href="#products">
+    Explore the collection
+  </a>
+</div>
+```
+
   </section>
-  <section id="products" class="section">
-    <div class="section-head"><h2>Featured products</h2><span id="product-status"></span></div>
-    <div id="product-grid" class="grid"></div>
+
+  <!-- CATEGORY -->
+
+  <section class="category-section" id="collections">
+
+```
+<div class="section-intro">
+  <p class="eyebrow">SHOP BY CATEGORY</p>
+  <h2>Designed for the table.</h2>
+</div>
+
+<div class="category-grid">
+
+  <a href="#products" class="category-card">
+    <div class="category-image category-napkins"></div>
+    <div class="category-info">
+      <h3>Napkins</h3>
+      <span>Explore collection →</span>
+    </div>
+  </a>
+
+  <a href="#products" class="category-card">
+    <div class="category-image category-cups"></div>
+    <div class="category-info">
+      <h3>Cups</h3>
+      <span>Explore collection →</span>
+    </div>
+  </a>
+
+  <a href="#products" class="category-card">
+    <div class="category-image category-plates"></div>
+    <div class="category-info">
+      <h3>Plates</h3>
+      <span>Explore collection →</span>
+    </div>
+  </a>
+
+</div>
+```
+
   </section>
+
+  <!-- PRODUCTS -->
+
+  <section id="products" class="products-section">
+
+```
+<div class="section-intro products-heading">
+  <div>
+    <p class="eyebrow">THE COLLECTION</p>
+    <h2>Made for gathering.</h2>
+  </div>
+
+  <p class="section-description">
+    Discover tableware designed to make
+    everyday occasions feel a little more special.
+  </p>
+</div>
+
+<div id="product-grid" class="grid"></div>
+```
+
+  </section>
+
+  <!-- BRAND STORY -->
+
+  <section class="story-section" id="about">
+
+```
+<div class="story-image"></div>
+
+<div class="story-content">
+  <p class="eyebrow">OUR PHILOSOPHY</p>
+
+  <h2>
+    Everyday tableware,
+    thoughtfully designed.
+  </h2>
+
+  <p>
+    We believe the table is where everyday life happens.
+    Morning coffee, weekend lunches, birthday dinners
+    and celebrations with the people we love.
+  </p>
+
+  <p>
+    Our collections bring together thoughtful design,
+    beautiful details and practical tableware made
+    for modern living.
+  </p>
+
+  <a href="#products" class="text-link">
+    Discover our collection →
+  </a>
+</div>
+```
+
+  </section>
+
+  <!-- OCCASIONS -->
+
+  <section class="occasion-section">
+
+```
+<div class="section-intro center">
+  <p class="eyebrow">FOR EVERY OCCASION</p>
+  <h2>Set the mood.</h2>
+</div>
+
+<div class="occasion-grid">
+
+  <div class="occasion-card">
+    <div class="occasion-bg occasion-one"></div>
+    <div class="occasion-label">
+      <span>Everyday</span>
+      <h3>Simple & beautiful</h3>
+    </div>
+  </div>
+
+  <div class="occasion-card">
+    <div class="occasion-bg occasion-two"></div>
+    <div class="occasion-label">
+      <span>Celebrations</span>
+      <h3>Make it memorable</h3>
+    </div>
+  </div>
+
+  <div class="occasion-card">
+    <div class="occasion-bg occasion-three"></div>
+    <div class="occasion-label">
+      <span>Seasonal</span>
+      <h3>Celebrate the season</h3>
+    </div>
+  </div>
+
+</div>
+```
+
+  </section>
+
+  <!-- BENEFITS -->
+
+  <section class="benefits-section">
+
+```
+<div class="benefit">
+  <div class="benefit-number">01</div>
+  <h3>Thoughtful Design</h3>
+  <p>Beautiful patterns and timeless details made for modern tables.</p>
+</div>
+
+<div class="benefit">
+  <div class="benefit-number">02</div>
+  <h3>Made for Moments</h3>
+  <p>From everyday meals to birthdays, dinners and celebrations.</p>
+</div>
+
+<div class="benefit">
+  <div class="benefit-number">03</div>
+  <h3>Easy to Enjoy</h3>
+  <p>Practical tableware designed to make hosting effortless.</p>
+</div>
+```
+
+  </section>
+
 </main>
-<footer>© 2026 Nova Shop · Privacy · Terms · Contact</footer>
+
+<footer>
+
+  <div class="footer-top">
+
+```
+<div>
+  <a class="footer-logo" href="index.html">MAISON TABLE</a>
+  <p>
+    Beautiful tableware for<br>
+    everyday moments.
+  </p>
+</div>
+
+<div class="footer-column">
+  <h4>Shop</h4>
+  <a href="#products">Napkins</a>
+  <a href="#products">Cups</a>
+  <a href="#products">Plates</a>
+</div>
+
+<div class="footer-column">
+  <h4>About</h4>
+  <a href="#about">Our Story</a>
+  <a href="#">Contact</a>
+  <a href="#">Shipping</a>
+</div>
+
+<div class="footer-column">
+  <h4>Information</h4>
+  <a href="#">Privacy Policy</a>
+  <a href="#">Terms</a>
+  <a href="#">Returns</a>
+</div>
+```
+
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Maison Table. All rights reserved.</span>
+    <span>Designed for beautiful moments.</span>
+  </div>
+
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="config.js"></script>
+
 <script src="app.js"></script>
+
 </body>
 </html>
