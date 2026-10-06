@@ -13,6 +13,11 @@ Deno.serve(async(req)=>{
   if(req.method==="OPTIONS") return new Response("ok",{headers:cors});
   try{
     const {cart,customer}=await req.json();
+    const authHeader=req.headers.get("Authorization");
+    if(!authHeader) throw new Error("Authentication required");
+    const authClient=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_ANON_KEY")!,{global:{headers:{Authorization:authHeader}}});
+    const {data:{user},error:userError}=await authClient.auth.getUser();
+    if(userError||!user) throw new Error("Authentication required");
     if(!Array.isArray(cart)||!cart.length) throw new Error("Cart is empty");
     const sb=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const ids=cart.map((x:any)=>x.id);
@@ -37,7 +42,7 @@ Deno.serve(async(req)=>{
     const order=await pp.json();
     const orderNumber=`NS-${Date.now()}`;
     const {data:dbOrder,error:dbError}=await sb.from("orders").insert({
-      order_number:orderNumber,paypal_order_id:order.id,customer_name:customer.name,customer_email:customer.email,
+      order_number:orderNumber,paypal_order_id:order.id,user_id:user.id,customer_name:customer.name,customer_email:customer.email,
       shipping_address:customer.address,city:customer.city,country:customer.country,total,currency:"USD",status:"pending"
     }).select().single();
     if(dbError) throw dbError;
