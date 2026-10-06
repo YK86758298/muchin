@@ -154,6 +154,8 @@
         const target = href==='#collections' ? document.getElementById('collections')
           : href==='#products' ? document.getElementById('products')
           : null;
+        const header = document.querySelector('.header');
+        if(header) header.classList.add('header-hidden');
         window.scrollTo({top: target ? target.getBoundingClientRect().top + window.scrollY : 0, behavior:'smooth'});
       });
     }
