@@ -1,20 +1,606 @@
-async function loadOrders(){
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  if(!session){return;}
-  const {data,error}=await supabaseClient.from("orders").select("*, order_items(*)").order("created_at",{ascending:false});
-  const box=document.getElementById("orders");
-  if(error){box.textContent=error.message;return;}
-  box.innerHTML=data.map(o=>`<div class="card order">
-    <h3>${o.order_number} — ${o.status}</h3>
-    <p>${o.customer_name} · ${o.customer_email}</p>
-    <p>${o.shipping_address}, ${o.city}, ${o.country}</p>
-    <strong>$${Number(o.total).toFixed(2)}</strong>
-    <div>${(o.order_items||[]).map(i=>`<div>${i.product_name} × ${i.quantity}</div>`).join("")}</div>
-  </div>`).join("");
+```javascript
+const supabase = supabaseClient;
+
+let editingProductId = null;
+
+
+// ================================
+// LOGIN
+// ================================
+
+const loginForm = document.getElementById("login-form");
+const loginBox = document.getElementById("login-box");
+const adminContent = document.getElementById("admin-content");
+const logoutBtn = document.getElementById("logout-btn");
+
+
+loginForm.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  if (data.user) {
+    await showAdmin();
+  }
+
+});
+
+
+// ================================
+// LOGOUT
+// ================================
+
+logoutBtn.addEventListener("click", async () => {
+
+  await supabase.auth.signOut();
+
+  adminContent.style.display = "none";
+  loginBox.style.display = "block";
+
+});
+
+
+// ================================
+// INITIAL CHECK
+// ================================
+
+checkSession();
+
+
+async function checkSession() {
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    await showAdmin();
+  }
+
 }
-document.getElementById("login-form").onsubmit=async(e)=>{
- e.preventDefault();
- const {error}=await supabaseClient.auth.signInWithPassword({email:email.value,password:password.value});
- if(error){alert(error.message);return;}
- document.getElementById("login-box").style.display="none";loadOrders();
+
+
+// ================================
+// SHOW ADMIN
+// ================================
+
+async function showAdmin() {
+
+  loginBox.style.display = "none";
+  adminContent.style.display = "block";
+
+  await loadProducts();
+  await loadOrders();
+
+}
+
+
+// ================================
+// PRODUCTS
+// ================================
+
+async function loadProducts() {
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    alert(error.message);
+    return;
+  }
+
+  const container = document.getElementById("products-admin");
+
+  document.getElementById("product-count").textContent =
+    data.length;
+
+  if (!data.length) {
+
+    container.innerHTML = `
+      <div class="card empty-admin">
+        <p>No products yet.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  container.innerHTML = data.map(product => {
+
+    const image = product.image_url
+      ? `<img src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}">`
+      : `<div class="product-image-placeholder">No image</div>`;
+
+
+    return `
+
+      <div class="admin-product-row">
+
+        <div class="admin-product-image">
+          ${image}
+        </div>
+
+
+        <div class="admin-product-info">
+
+          <h3>${escapeHtml(product.name)}</h3>
+
+          <p>
+            ${escapeHtml(product.description || "")}
+          </p>
+
+          <div class="admin-product-meta">
+
+            <strong>
+              $${Number(product.price).toFixed(2)}
+            </strong>
+
+            <span>
+              Stock: ${product.stock}
+            </span>
+
+            <span class="${product.active ? "status-active" : "status-inactive"}">
+              ${product.active ? "Active" : "Hidden"}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="admin-product-actions">
+
+          <button
+            class="small-btn"
+            onclick="editProduct('${product.id}')"
+          >
+            Edit
+          </button>
+
+
+          <button
+            class="small-btn"
+            onclick="toggleProduct('${product.id}', ${product.active})"
+          >
+            ${product.active ? "Hide" : "Publish"}
+          </button>
+
+
+          <button
+            class="small-btn danger-btn"
+            onclick="deleteProduct('${product.id}')"
+          >
+            Delete
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+// ================================
+// ADD PRODUCT
+// ================================
+
+document.getElementById("add-product-btn").addEventListener("click", () => {
+
+  editingProductId = null;
+
+  document.getElementById("product-form").reset();
+
+  document.getElementById("product-id").value = "";
+
+  document.getElementById("product-active").checked = true;
+
+  document.getElementById("product-form-title").textContent =
+    "Add Product";
+
+  document.getElementById("product-form-message").textContent = "";
+
+  document.getElementById("product-form-box").style.display = "block";
+
+  window.scrollTo({
+    top: document.getElementById("product-form-box").offsetTop - 30,
+    behavior: "smooth"
+  });
+
+});
+
+
+// ================================
+// CANCEL
+// ================================
+
+document.getElementById("cancel-product-btn").addEventListener("click", () => {
+
+  document.getElementById("product-form-box").style.display = "none";
+
+  editingProductId = null;
+
+});
+
+
+// ================================
+// SAVE PRODUCT
+// ================================
+
+document.getElementById("product-form").addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+
+  const name =
+    document.getElementById("product-name").value.trim();
+
+  const description =
+    document.getElementById("product-description").value.trim();
+
+  const price =
+    Number(document.getElementById("product-price").value);
+
+  const stock =
+    Number(document.getElementById("product-stock").value);
+
+  const image_url =
+    document.getElementById("product-image").value.trim();
+
+  const active =
+    document.getElementById("product-active").checked;
+
+
+  if (!name) {
+    alert("Please enter a product name.");
+    return;
+  }
+
+  if (price < 0 || Number.isNaN(price)) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  if (stock < 0 || Number.isNaN(stock)) {
+    alert("Please enter a valid stock quantity.");
+    return;
+  }
+
+
+  const productData = {
+    name,
+    description,
+    price,
+    stock,
+    image_url,
+    active
+  };
+
+
+  const message =
+    document.getElementById("product-form-message");
+
+  message.textContent = "Saving...";
+
+
+  let result;
+
+
+  if (editingProductId) {
+
+    result = await supabase
+      .from("products")
+      .update(productData)
+      .eq("id", editingProductId);
+
+  } else {
+
+    result = await supabase
+      .from("products")
+      .insert(productData);
+
+  }
+
+
+  if (result.error) {
+
+    console.error(result.error);
+
+    message.textContent =
+      "Error: " + result.error.message;
+
+    return;
+
+  }
+
+
+  message.textContent = "Saved successfully.";
+
+
+  document.getElementById("product-form-box").style.display =
+    "none";
+
+
+  editingProductId = null;
+
+
+  await loadProducts();
+
+});
+
+
+// ================================
+// EDIT PRODUCT
+// ================================
+
+window.editProduct = async function(id) {
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  editingProductId = id;
+
+
+  document.getElementById("product-id").value =
+    data.id;
+
+  document.getElementById("product-name").value =
+    data.name || "";
+
+  document.getElementById("product-description").value =
+    data.description || "";
+
+  document.getElementById("product-price").value =
+    data.price;
+
+  document.getElementById("product-stock").value =
+    data.stock;
+
+  document.getElementById("product-image").value =
+    data.image_url || "";
+
+  document.getElementById("product-active").checked =
+    data.active;
+
+
+  document.getElementById("product-form-title").textContent =
+    "Edit Product";
+
+
+  document.getElementById("product-form-message").textContent =
+    "";
+
+
+  document.getElementById("product-form-box").style.display =
+    "block";
+
+
+  window.scrollTo({
+    top: document.getElementById("product-form-box").offsetTop - 30,
+    behavior: "smooth"
+  });
+
 };
+
+
+// ================================
+// HIDE / PUBLISH
+// ================================
+
+window.toggleProduct = async function(id, currentStatus) {
+
+  const newStatus = !currentStatus;
+
+
+  const { error } = await supabase
+    .from("products")
+    .update({
+      active: newStatus
+    })
+    .eq("id", id);
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  await loadProducts();
+
+};
+
+
+// ================================
+// DELETE
+// ================================
+
+window.deleteProduct = async function(id) {
+
+  const confirmed = confirm(
+    "Are you sure you want to delete this product?"
+  );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", id);
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  await loadProducts();
+
+};
+
+
+// ================================
+// ORDERS
+// ================================
+
+async function loadOrders() {
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+
+  if (error) {
+
+    console.error(error);
+
+    document.getElementById("orders").innerHTML = `
+      <div class="card">
+        <p>Unable to load orders.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  document.getElementById("order-count").textContent =
+    data.length;
+
+
+  if (!data.length) {
+
+    document.getElementById("orders").innerHTML = `
+      <div class="card empty-admin">
+        <p>No orders yet.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  document.getElementById("orders").innerHTML = data.map(order => {
+
+    return `
+
+      <div class="card admin-order">
+
+        <div class="admin-order-top">
+
+          <div>
+
+            <span class="order-label">
+              Order
+            </span>
+
+            <h3>
+              ${escapeHtml(order.id)}
+            </h3>
+
+          </div>
+
+
+          <span class="order-status">
+            ${escapeHtml(order.status || "pending")}
+          </span>
+
+        </div>
+
+
+        <div class="admin-order-details">
+
+          <p>
+            <strong>Customer:</strong>
+            ${escapeHtml(order.customer_name || "")}
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            ${escapeHtml(order.customer_email || "")}
+          </p>
+
+          <p>
+            <strong>Total:</strong>
+            $${Number(order.total || 0).toFixed(2)}
+          </p>
+
+          <p>
+            <strong>Date:</strong>
+            ${order.created_at
+              ? new Date(order.created_at).toLocaleString()
+              : ""}
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+// ================================
+// HTML ESCAPE
+// ================================
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+```
