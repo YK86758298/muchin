@@ -33,7 +33,7 @@ text-decoration: none;
 HEADER
 ========================= */
 
-body { padding-top: 76px; }
+body { padding-top: 0; }
 
 .header {
 height: 76px;
@@ -2387,4 +2387,17 @@ footer {
   .brand-advantages{grid-template-columns:1fr;gap:38px;padding-top:76px;padding-bottom:76px}
   .brand-advantage-intro{grid-column:auto}
   .brand-advantages .benefit p{max-width:100%}
+}
+
+
+/* Scroll-aware header */
+.header {
+  transition: transform 0.45s ease, opacity 0.45s ease;
+  will-change: transform;
+}
+.header.header-hidden {
+  transform: translateY(-100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .header { transition: none; }
 }
