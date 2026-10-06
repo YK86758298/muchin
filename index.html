@@ -157,8 +157,12 @@
           : href==='#products' ? document.getElementById('products')
           : null;
         const header = document.querySelector('.header');
-        if(header) header.classList.add('header-hidden');
-        if(href==='#collections' || href==='#products'){
+        if(href==='index.html'){
+          navJumping=false;
+          clearTimeout(navJumpTimer);
+          if(header) header.classList.remove('header-hidden');
+        } else {
+          if(header) header.classList.add('header-hidden');
           navJumping=true;
           clearTimeout(navJumpTimer);
           navJumpTimer=setTimeout(function(){ navJumping=false; },900);
