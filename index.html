@@ -146,6 +146,8 @@
 <script src="auth.js?v=20261006"></script>
 <script>
 (function(){
+  let navJumping=false;
+  let navJumpTimer;
   document.querySelectorAll('.main-nav a').forEach(function(link){
     const href=link.getAttribute('href');
     if(href==='#collections' || href==='#products' || href==='index.html'){
@@ -156,10 +158,16 @@
           : null;
         const header = document.querySelector('.header');
         if(header) header.classList.add('header-hidden');
+        if(href==='#collections' || href==='#products'){
+          navJumping=true;
+          clearTimeout(navJumpTimer);
+          navJumpTimer=setTimeout(function(){ navJumping=false; },900);
+        }
         window.scrollTo({top: target ? target.getBoundingClientRect().top + window.scrollY : 0, behavior:'smooth'});
       });
     }
   });
+  window.__muchinNavJumping=function(){ return navJumping; };
 })();
 </script>
 <script>
@@ -169,6 +177,12 @@
   const header=document.querySelector('.header');
   function updateHeader(){
     const y=window.scrollY;
+    if(window.__muchinNavJumping && window.__muchinNavJumping()){
+      header.classList.add('header-hidden');
+      lastY=y;
+      ticking=false;
+      return;
+    }
     if(y<=10){ header.classList.remove('header-hidden'); }
     else if(y>lastY+3){ header.classList.add('header-hidden'); }
     else if(y<lastY-3){ header.classList.remove('header-hidden'); }
