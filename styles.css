@@ -1324,3 +1324,6 @@ margin-bottom: 8px;
     padding-bottom: 45px;
   }
 }
+
+
+.admin-help{margin:8px 0;color:var(--muted);font-size:13px}.admin-settings-form{padding:32px}.settings-group{padding-bottom:30px;margin-bottom:30px;border-bottom:1px solid var(--line)}.settings-group h3{font-family:Georgia,serif;font-size:26px;font-weight:400}.settings-group label{display:block;margin:12px 0 7px;font-size:12px;font-weight:700}.settings-group input[type=text],.settings-group textarea{width:100%;padding:13px;border:1px solid #ccc;background:#fff;font:inherit}.settings-image-preview{display:block;width:100%;max-width:520px;max-height:300px;object-fit:cover;margin-top:12px}.settings-category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.settings-category-card{padding:18px;background:var(--cream);border:1px solid var(--line)}.settings-category-card .settings-image-preview{height:180px}.upload-status{display:block;margin-top:6px;color:var(--muted);font-size:12px}@media(max-width:700px){.settings-category-grid{grid-template-columns:1fr}.admin-settings-form{padding:20px}}
