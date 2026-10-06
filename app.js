@@ -45,7 +45,7 @@ function bindProductButtons(data, root){
     const cart=getCart();
     const item=cart.find(x=>x.id===id);
     if(item)item.qty++;
-    else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1});
+    else cart.push({id:p.id,name:p.name,price:Number(p.price),image_url:p.image_url || "",qty:1});
     saveCart(cart);
     btn.textContent="Added";
     setTimeout(()=>btn.textContent="Add to cart",700);
@@ -139,12 +139,32 @@ async function loadProducts(){
 
 async function loadCart(){
   const box=document.getElementById("cart"); if(!box)return;
-  const cart=getCart();
+  let cart=getCart();
   if(!cart.length){box.innerHTML="<p>Your cart is empty.</p>"; document.getElementById("cart-total").textContent=""; return;}
-  box.innerHTML=cart.map(x=>`<div class="cart-row"><div><b>${escapeHtml(x.name)}</b><div>$${x.price.toFixed(2)} × ${x.qty}</div></div><button class="remove" data-id="${escapeHtml(x.id)}">Remove</button></div>`).join("");
+
+  const missingIds=cart.filter(x=>!x.image_url).map(x=>x.id);
+  if(missingIds.length){
+    try{
+      const {data}=await supabaseClient.from("products").select("id,image_url").in("id",missingIds);
+      const imageMap=Object.fromEntries((data||[]).map(p=>[p.id,p.image_url]));
+      cart=cart.map(x=>x.image_url ? x : {...x,image_url:imageMap[x.id] || ""});
+      saveCart(cart);
+    }catch(e){}
+  }
+
+  box.innerHTML=cart.map(x=>`<div class="cart-row">
+    <div class="cart-item-info">
+      <img class="cart-item-image" src="${escapeHtml(x.image_url || "https://placehold.co/160x160?text=Product")}" alt="${escapeHtml(x.name)}">
+      <div class="cart-item-details">
+        <b>${escapeHtml(x.name)}</b>
+        <div>${Number(x.price).toFixed(2)} × ${x.qty}</div>
+      </div>
+    </div>
+    <button class="remove" data-id="${escapeHtml(x.id)}">Remove</button>
+  </div>`).join("");
   document.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{saveCart(getCart().filter(x=>x.id!==b.dataset.id));loadCart();});
-  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
-  document.getElementById("cart-total").innerHTML=`<h2>Total: $${total.toFixed(2)}</h2>`;
+  const total=cart.reduce((s,x)=>s+Number(x.price)*x.qty,0);
+  document.getElementById("cart-total").innerHTML=`<h2>Total: ${total.toFixed(2)}</h2>`;
 }
 
 updateCartCount();
