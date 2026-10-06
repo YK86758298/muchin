@@ -1416,3 +1416,32 @@ footer {
     padding-right: 20px;
   }
 }
+
+/* Product category directory */
+.category-card-simple {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--white);
+  border: 1px solid var(--line);
+  transition: transform .25s ease, border-color .25s ease;
+}
+.category-card-simple:hover {
+  transform: translateY(-3px);
+  border-color: #b8b3a9;
+}
+.category-simple-number {
+  padding: 22px 22px 0;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+.category-card-simple .category-info {
+  padding-top: 10px;
+}
+@media (min-width: 901px) {
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
