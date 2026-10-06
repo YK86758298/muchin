@@ -157,6 +157,24 @@
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script src="auth.js?v=20261006"></script>
+<script>
+(function(){
+  let lastY=window.scrollY;
+  let ticking=false;
+  const header=document.querySelector('.header');
+  function updateHeader(){
+    const y=window.scrollY;
+    if(y<=10){ header.classList.remove('header-hidden'); }
+    else if(y>lastY+3){ header.classList.add('header-hidden'); }
+    else if(y<lastY-3){ header.classList.remove('header-hidden'); }
+    lastY=y;
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){
+    if(!ticking){ window.requestAnimationFrame(updateHeader); ticking=true; }
+  },{passive:true});
+})();
+</script>
 
 </body>
 </html>
