@@ -2112,3 +2112,102 @@ footer {
 .admin-status-cancelled{background:#f1e3e3;color:#8a4444}
 .admin-status-paid{background:#e7ecef;color:#41545f}
 @media(max-width:700px){.admin-order-update{grid-template-columns:1fr;align-items:stretch}.admin-order-save{width:100%}.admin-order-message{text-align:left}}
+
+
+/* ========================================
+   MUCHIN HOMEPAGE PRODUCT SECTIONS
+======================================== */
+.product-category-block{
+  margin-top:72px;
+  scroll-margin-top:100px;
+}
+.product-category-block:first-of-type{
+  margin-top:0;
+}
+.product-category-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:30px;
+  margin-bottom:28px;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line);
+}
+.product-category-heading h3{
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:32px;
+  font-weight:400;
+  line-height:1.1;
+}
+.product-category-heading .eyebrow{
+  margin-bottom:10px;
+}
+.product-category-heading .text-link{
+  margin:0;
+  white-space:nowrap;
+}
+.brand-advantages{
+  grid-template-columns:1.2fr repeat(3,1fr);
+  gap:45px;
+  align-items:start;
+}
+.brand-advantage-intro h2{
+  max-width:420px;
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(32px,3.5vw,48px);
+  font-weight:400;
+  line-height:1.05;
+  letter-spacing:-.025em;
+}
+.admin-product-badge{
+  padding:3px 7px;
+  background:var(--ink);
+  color:#fff;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.admin-product-form select{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:0;
+  background:#fff;
+  font:inherit;
+}
+.admin-product-form select:focus{
+  outline:none;
+  border-color:var(--ink);
+  box-shadow:0 0 0 1px var(--ink);
+}
+@media(max-width:1100px){
+  .brand-advantages{
+    grid-template-columns:1fr 1fr;
+  }
+  .brand-advantage-intro{
+    grid-column:1 / -1;
+  }
+}
+@media(max-width:600px){
+  .product-category-block{
+    margin-top:52px;
+  }
+  .product-category-heading{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .product-category-heading h3{
+    font-size:28px;
+  }
+  .brand-advantages{
+    grid-template-columns:1fr;
+    gap:34px;
+  }
+  .brand-advantage-intro{
+    grid-column:auto;
+  }
+}
