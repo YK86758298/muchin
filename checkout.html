@@ -1,26 +1,200 @@
+```html
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout - Nova Shop</title><link rel="stylesheet" href="styles.css"></head>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout — MAISON TABLE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
 <body>
-<header class="header"><a class="logo" href="index.html">NOVA SHOP</a><nav><a href="cart.html">Cart <span id="cart-count">0</span></a></nav></header>
-<main class="section narrow">
-<h1>Checkout</h1>
-<form id="checkout-form" class="form">
-<input name="name" placeholder="Full name" required>
-<input name="email" type="email" placeholder="Email" required>
-<input name="address" placeholder="Shipping address" required>
-<input name="city" placeholder="City" required>
-<input name="country" placeholder="Country" required>
-</form>
-<div id="checkout-summary" class="card"></div>
-<div id="paypal-button-container"></div>
-<p id="checkout-message"></p>
+
+<header class="header">
+
+  <a class="logo" href="index.html">
+    MAISON TABLE
+  </a>
+
+  <nav>
+    <a href="cart.html">
+      Cart <span id="cart-count">0</span>
+    </a>
+  </nav>
+
+</header>
+
+
+<main class="section narrow checkout-page">
+
+  <div class="page-heading">
+    <p class="eyebrow">Secure Checkout</p>
+    <h1>Complete your order</h1>
+    <p class="page-intro">
+      Enter your details below to complete your purchase.
+    </p>
+  </div>
+
+
+  <div class="checkout-layout">
+
+
+    <!-- Customer information -->
+
+    <section class="checkout-form-section">
+
+      <div class="checkout-section-heading">
+        <span>01</span>
+        <div>
+          <h2>Shipping information</h2>
+          <p>Where should we send your order?</p>
+        </div>
+      </div>
+
+
+      <form id="checkout-form" class="form">
+
+        <label for="customer-name">Full name</label>
+        <input
+          id="customer-name"
+          name="name"
+          placeholder="Full name"
+          autocomplete="name"
+          required
+        >
+
+
+        <label for="customer-email">Email address</label>
+        <input
+          id="customer-email"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        >
+
+
+        <label for="customer-address">Shipping address</label>
+        <input
+          id="customer-address"
+          name="address"
+          placeholder="Street address"
+          autocomplete="street-address"
+          required
+        >
+
+
+        <div class="form-row">
+
+          <div>
+            <label for="customer-city">City</label>
+            <input
+              id="customer-city"
+              name="city"
+              placeholder="City"
+              autocomplete="address-level2"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="customer-country">Country</label>
+            <input
+              id="customer-country"
+              name="country"
+              placeholder="Country"
+              autocomplete="country-name"
+              required
+            >
+          </div>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <!-- Order summary -->
+
+    <aside class="checkout-summary card">
+
+      <p class="eyebrow">02</p>
+
+      <h2>Your order</h2>
+
+      <div id="checkout-summary"></div>
+
+      <div class="checkout-payment">
+
+        <p class="payment-label">Payment</p>
+
+        <div class="payment-method">
+          <span>PayPal</span>
+          <span>Secure</span>
+        </div>
+
+        <p class="payment-note">
+          You will be redirected through PayPal's secure payment system.
+        </p>
+
+      </div>
+
+      <div id="paypal-button-container"></div>
+
+      <p id="checkout-message" class="checkout-message"></p>
+
+      <a class="back-to-cart" href="cart.html">
+        ← Back to cart
+      </a>
+
+    </aside>
+
+  </div>
+
 </main>
+
+
+<footer class="footer">
+
+  <div class="footer-inner">
+
+    <div>
+      <div class="footer-logo">MAISON TABLE</div>
+      <p>Beautiful details for everyday tables.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="index.html">Shop</a>
+      <a href="cart.html">Cart</a>
+      <a href="index.html#story">Our Story</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 MAISON TABLE. All rights reserved.
+  </div>
+
+</footer>
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
+
 <script>
-document.write('<script src="https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(CONFIG.PAYPAL_CLIENT_ID)+'&currency=USD&components=buttons"><\/script>');
+document.write(
+  '<script src="https://www.paypal.com/sdk/js?client-id=' +
+  encodeURIComponent(CONFIG.PAYPAL_CLIENT_ID) +
+  '&currency=USD&components=buttons"><\/script>'
+);
 </script>
+
 <script src="checkout.js"></script>
-</body></html>
+
+</body>
+</html>
+```
