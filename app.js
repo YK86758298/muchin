@@ -52,10 +52,68 @@ function bindProductButtons(data, root){
   });
 }
 
+let homepageProducts=[];
+let currentShopCategory="best";
+let currentShopPage=1;
+const SHOP_PAGE_SIZE=8;
+
+function categoryTitle(key){
+  if(key==="best")return "Best Sellers";
+  const found=CATEGORY_DEFS.find(x=>x.key===key);
+  return found ? found.title : key;
+}
+
+function renderShop(){
+  const grid=document.getElementById("shop-product-grid");
+  const pager=document.getElementById("shop-pagination");
+  const title=document.getElementById("shop-current-title");
+  const eyebrow=document.getElementById("shop-current-eyebrow");
+  if(!grid||!pager)return;
+
+  const items=currentShopCategory==="best"
+    ? homepageProducts.filter(p=>p.best_seller)
+    : homepageProducts.filter(p=>String(p.category||"").toLowerCase()===currentShopCategory.toLowerCase());
+
+  const totalPages=Math.max(1,Math.ceil(items.length/SHOP_PAGE_SIZE));
+  currentShopPage=Math.min(currentShopPage,totalPages);
+  const start=(currentShopPage-1)*SHOP_PAGE_SIZE;
+  const pageItems=items.slice(start,start+SHOP_PAGE_SIZE);
+
+  title.textContent=categoryTitle(currentShopCategory);
+  eyebrow.textContent=currentShopCategory==="best" ? "CUSTOMER FAVORITES" : "COLLECTION";
+
+  grid.innerHTML=pageItems.length
+    ? pageItems.map(productCard).join("")
+    : '<div class="shop-empty">No products in this category yet.</div>';
+  bindProductButtons(pageItems,grid);
+
+  pager.innerHTML=totalPages>1
+    ? '<button type="button" class="shop-page-btn" data-page="-1" '+(currentShopPage===1?'disabled':'')+' aria-label="Previous page">←</button><span>'+currentShopPage+' / '+totalPages+'</span><button type="button" class="shop-page-btn" data-page="1" '+(currentShopPage===totalPages?'disabled':'')+' aria-label="Next page">→</button>'
+    : '';
+
+  pager.querySelectorAll(".shop-page-btn").forEach(btn=>{
+    btn.onclick=()=>{
+      currentShopPage+=Number(btn.dataset.page);
+      renderShop();
+      document.getElementById("products").scrollIntoView({behavior:"smooth",block:"start"});
+    };
+  });
+
+  document.querySelectorAll("[data-shop-category]").forEach(el=>{
+    el.classList.toggle("is-active",el.dataset.shopCategory===currentShopCategory);
+  });
+}
+
+function selectShopCategory(category,scroll){
+  currentShopCategory=category;
+  currentShopPage=1;
+  renderShop();
+  if(scroll)document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 async function loadProducts(){
-  const bestGrid=document.getElementById("best-sellers-grid");
-  const categoryRoot=document.getElementById("category-products");
-  if(!bestGrid || !categoryRoot)return;
+  const grid=document.getElementById("shop-product-grid");
+  if(!grid)return;
 
   const {data,error}=await supabaseClient
     .from("products")
@@ -64,39 +122,18 @@ async function loadProducts(){
     .order("created_at",{ascending:false});
 
   if(error){
-    bestGrid.innerHTML="<p>Could not load products.</p>";
+    grid.innerHTML="<p>Could not load products.</p>";
     return;
   }
 
-  const products=data || [];
-  const bestSellers=products.filter(p=>p.best_seller);
+  homepageProducts=data||[];
+  renderShop();
 
-  if(bestSellers.length){
-    bestGrid.innerHTML=bestSellers.slice(0,8).map(productCard).join("");
-    bindProductButtons(bestSellers,bestGrid);
-  }else{
-    document.getElementById("best-sellers-section").style.display="none";
-  }
-
-  categoryRoot.innerHTML=CATEGORY_DEFS.map(category=>{
-    const items=products.filter(p=>String(p.category||"").toLowerCase()===category.key.toLowerCase());
-    if(!items.length)return "";
-    return `
-      <section class="product-category-block" id="${category.id}">
-        <div class="product-category-heading">
-          <div>
-            <p class="eyebrow">COLLECTION</p>
-            <h3>${category.title}</h3>
-          </div>
-          <a href="shop.html?category=${encodeURIComponent(category.key)}" class="text-link">View all →</a>
-        </div>
-        <div class="grid">${items.slice(0,8).map(productCard).join("")}</div>
-      </section>`;
-  }).join("");
-
-  CATEGORY_DEFS.forEach(category=>{
-    const section=document.getElementById(category.id);
-    if(section)bindProductButtons(products.filter(p=>String(p.category||"").toLowerCase()===category.key.toLowerCase()),section);
+  document.querySelectorAll("[data-shop-category]").forEach(el=>{
+    el.addEventListener("click",function(e){
+      if(el.tagName==="A")e.preventDefault();
+      selectShopCategory(el.dataset.shopCategory,true);
+    });
   });
 }
 
