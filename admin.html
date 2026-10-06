@@ -1,14 +1,77 @@
+```html
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Nova Shop</title><link rel="stylesheet" href="styles.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin — MAISON TABLE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
 <body>
-<header class="header"><a class="logo" href="index.html">NOVA SHOP ADMIN</a><nav><a href="index.html">Store</a></nav></header>
-<main class="section narrow">
-<h1>Orders</h1>
-<div id="login-box" class="card">
-<form id="login-form" class="form"><input id="email" type="email" placeholder="Admin email" required><input id="password" type="password" placeholder="Password" required><button class="btn">Login</button></form>
-</div>
-<div id="orders"></div>
+
+<header class="header">
+  <a class="logo" href="index.html">MAISON TABLE</a>
+
+  <nav>
+    <a href="index.html">Store</a>
+  </nav>
+</header>
+
+<main class="section narrow admin-page">
+
+  <div class="page-heading">
+    <p class="eyebrow">Management</p>
+    <h1>Orders</h1>
+    <p class="page-intro">
+      Manage your orders and keep track of customer purchases.
+    </p>
+  </div>
+
+  <div id="login-box" class="card admin-login">
+
+    <div class="admin-login-heading">
+      <p class="eyebrow">Private Area</p>
+      <h2>Admin login</h2>
+      <p>Sign in to access your store orders.</p>
+    </div>
+
+    <form id="login-form" class="form">
+
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Admin email"
+        autocomplete="email"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button class="btn" type="submit">
+        Sign in
+      </button>
+
+    </form>
+
+  </div>
+
+  <div id="orders"></div>
+
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="admin.js"></script>
-</body></html>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>
+```
