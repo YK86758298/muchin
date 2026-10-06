@@ -1539,6 +1539,8 @@ select {
 
 /* Tablet */
 @media (max-width: 900px) {
+  body { padding-top: 68px; }
+
   .header {
     height: 68px;
   }
@@ -1596,6 +1598,8 @@ select {
 
 /* Phone */
 @media (max-width: 600px) {
+  body { padding-top: 64px; }
+
   .header {
     height: 64px;
     padding: 0 18px;
