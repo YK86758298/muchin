@@ -1823,3 +1823,162 @@ select {
     grid-column: auto;
   }
 }
+
+
+/* ========================================
+   MUCHIN SHARED PAGE POLISH
+======================================== */
+
+body {
+  min-height: 100vh;
+}
+
+body > main {
+  min-height: calc(100vh - 76px);
+}
+
+.cart-page,
+.checkout-page,
+.admin-page {
+  padding-bottom: 90px;
+}
+
+.cart-items,
+.checkout-form-section {
+  min-width: 0;
+}
+
+.cart-items #cart:empty::after {
+  content: "Your cart is empty.";
+  display: block;
+  padding: 42px 0;
+  color: var(--muted);
+}
+
+.cart-summary,
+.checkout-summary,
+.admin-login,
+.admin-product-form,
+.admin-settings-form,
+.admin-order,
+.admin-stat {
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+.cart-summary h2,
+.checkout-summary h2 {
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+.cart-row {
+  padding: 24px 4px;
+}
+
+.cart-row b {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.remove {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+
+.form input,
+.form textarea,
+.settings-group input[type=text],
+.settings-group textarea {
+  border-color: var(--line);
+  border-radius: 0;
+  outline: none;
+}
+
+.form input:focus,
+.form textarea:focus,
+.settings-group input[type=text]:focus,
+.settings-group textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.admin-page h1,
+.admin-page h2,
+.admin-page h3 {
+  letter-spacing: -.015em;
+}
+
+.admin-topbar {
+  padding-top: 18px;
+}
+
+.admin-stat {
+  background: var(--white);
+}
+
+.admin-stat strong {
+  color: var(--ink);
+}
+
+.admin-product-row {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.admin-product-actions .small-btn {
+  border-radius: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-section {
+  scroll-margin-top: 90px;
+}
+
+footer {
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  body > main {
+    min-height: calc(100vh - 68px);
+  }
+
+  .cart-page,
+  .checkout-page,
+  .admin-page {
+    padding-bottom: 64px;
+  }
+}
+
+@media (max-width: 600px) {
+  body > main {
+    min-height: calc(100vh - 64px);
+  }
+
+  .cart-page,
+  .checkout-page,
+  .admin-page {
+    padding-bottom: 48px;
+  }
+
+  .cart-summary,
+  .checkout-summary {
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .admin-section {
+    margin-bottom: 48px;
+  }
+}
