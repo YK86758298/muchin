@@ -31,7 +31,17 @@ async function loadCart(){
   const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
   document.getElementById("cart-total").innerHTML=`<h2>Total: $${total.toFixed(2)}</h2>`;
 }
-updateCartCount(); loadProducts(); loadCart();
 
+updateCartCount();
+loadProducts();
+loadCart();
 
-async function loadSiteSettings(){const r=await supabaseClient.from("site_settings").select("*").eq("id",true).maybeSingle(),d=r.data;if(!d)return;const b="MUCHIN";const a=document.getElementById("site-brand-name"),f=document.getElementById("footer-brand-name"),t=document.getElementById("site-title");if(a)a.textContent=b;if(f)f.textContent=b;if(t)t.textContent=b+" | Modern Tableware";const h=document.getElementById("hero-title");if(h)h.textContent=d.hero_title||"";const s=document.getElementById("hero-subtitle");if(s)s.textContent=d.hero_subtitle||"";const hero=document.getElementById("hero-section");if(hero&&d.hero_image_url)hero.style.backgroundImage="linear-gradient(90deg,rgba(245,242,235,.98),rgba(245,242,235,.2)),url(\""+d.hero_image_url+"\")";const pt=document.getElementById("philosophy-title"),px=document.getElementById("philosophy-text");if(pt)pt.textContent=d.philosophy_title||"";if(px)px.textContent=d.philosophy_text||"";[1,2,3].forEach(n=>{const ne=document.getElementById("category"+n+"-name"),ie=document.getElementById("category"+n+"-image"),im=d["category"+n+"_image_url"];if(ne)ne.textContent=d["category"+n+"_name"]||"";if(ie&&im)ie.style.backgroundImage="url(\""+im+"\")";});}loadSiteSettings();
+/*
+ * Storefront content is controlled by the Muchin HTML/CSS.
+ * Supabase site_settings is intentionally NOT applied here.
+ *
+ * Supabase remains the data source for products, orders and other
+ * backend functionality, but old site_settings values must not
+ * overwrite the Muchin storefront or cause a flash of legacy content.
+ */
+function loadSiteSettings(){ return Promise.resolve(); }
