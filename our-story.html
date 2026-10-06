@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MUCHIN | Our Story</title>
+  <meta name="description" content="The MUCHIN story — from a small New York party shop to celebrations around the world.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="index.html" id="site-brand-name">MUCHIN</a>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#collections">Categories</a>
+    <a href="index.html#products">Shop</a>
+    <a href="our-story.html" class="is-current">Our Story</a>
+  </nav>
+  <div class="header-actions">
+    <a href="login.html" class="account-link" data-account-link>Sign in</a>
+    <a href="register.html" class="register-link">Register</a>
+    <a href="cart.html" class="cart-link">Cart <span id="cart-count">0</span></a>
+  </div>
+</header>
+
+<main class="our-story-page">
+  <section class="story-hero">
+    <div class="story-hero-content">
+      <p class="eyebrow">OUR STORY</p>
+      <h1>From a small New York party shop to celebrations around the world.</h1>
+      <p>MUCHIN has always believed that every celebration deserves to feel special.</p>
+    </div>
+    <div class="story-hero-image"></div>
+  </section>
+
+  <section class="story-copy-section">
+    <div class="story-copy-intro">
+      <p class="eyebrow">THE BEGINNING</p>
+      <h2>A simple idea: make every celebration more special.</h2>
+    </div>
+    <div class="story-copy">
+      <p>MUCHIN began in 1995 as a small party shop in New York, built around a simple belief: every celebration deserves to feel special.</p>
+      <p>Over the years, that little shop grew into eight stores, serving families and party lovers with products for birthdays, holidays, gatherings and all the moments in between.</p>
+    </div>
+  </section>
+
+  <section class="story-copy-section story-copy-section-reverse">
+    <div class="story-copy-image"></div>
+    <div class="story-copy">
+      <p class="eyebrow">A NEW CHAPTER</p>
+      <h2>From local stores to a global online brand.</h2>
+      <p>In 2020, MUCHIN entered a new chapter by joining forces with Chinese manufacturing partners. We closed our physical stores and moved online, combining our understanding of party culture with professional product development and manufacturing.</p>
+      <p>Today, MUCHIN brings thoughtfully designed party supplies directly to customers around the world. More than 1 million customers have already chosen MUCHIN to be part of their celebrations.</p>
+    </div>
+  </section>
+
+  <section class="story-closing">
+    <p class="eyebrow">TODAY</p>
+    <h2>Thoughtfully designed for the moments that matter.</h2>
+    <a href="index.html#products" class="hero-button">Shop the collection</a>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <a class="footer-logo" href="index.html" id="footer-brand-name">MUCHIN</a>
+      <p>Party supplies designed to make<br>every celebration more special.</p>
+    </div>
+    <div class="footer-column">
+      <h4>Shop</h4>
+      <a href="index.html#products">Best Sellers</a>
+      <a href="index.html#collections">Categories</a>
+      <a href="cart.html">Cart</a>
+    </div>
+    <div class="footer-column">
+      <h4>About</h4>
+      <a href="our-story.html">Our Story</a>
+      <a href="#">Contact</a>
+      <a href="#">Shipping</a>
+    </div>
+    <div class="footer-column">
+      <h4>Information</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms</a>
+      <a href="#">Returns</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Muchin. All rights reserved.</span>
+    <span>Designed for beautiful moments.</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="auth.js?v=20261006"></script>
+<script>
+(function(){
+  let lastY=window.scrollY;
+  let ticking=false;
+  const header=document.querySelector('.header');
+  function updateHeader(){
+    const y=window.scrollY;
+    if(y<=10){ header.classList.remove('header-hidden'); }
+    else if(y>lastY+3){ header.classList.add('header-hidden'); }
+    else if(y<lastY-3){ header.classList.remove('header-hidden'); }
+    lastY=y;
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){
+    if(!ticking){ window.requestAnimationFrame(updateHeader); ticking=true; }
+  },{passive:true});
+})();
+</script>
+</body>
+</html>
