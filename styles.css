@@ -2485,3 +2485,8 @@ footer {
 .products-section{
   padding-top:0;
 }
+
+/* Shop section spacing */
+.products-section{
+  padding-top:72px;
+}
