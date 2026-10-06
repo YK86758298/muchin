@@ -2594,3 +2594,21 @@ footer {
   grid-template-columns:1.38fr repeat(3,1fr);
   gap:28px;
 }
+
+/* Three equal brand advantages */
+.brand-advantages{
+  grid-template-columns:repeat(3,1fr);
+  gap:48px;
+  align-items:start;
+}
+.brand-advantages .benefit:nth-of-type(2),
+.brand-advantages .benefit:nth-of-type(3),
+.brand-advantages .benefit:nth-of-type(4){
+  transform:none;
+}
+@media(max-width:600px){
+  .brand-advantages{
+    grid-template-columns:1fr;
+    gap:38px;
+  }
+}
