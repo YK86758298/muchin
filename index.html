@@ -43,14 +43,14 @@
     </div>
 
     <div class="category-grid category-grid-home">
-      <a href="#category-paper-napkin" class="category-card category-card-simple"><div class="category-simple-number">01</div><div class="category-info"><h3>Paper Napkins</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-cup" class="category-card category-card-simple"><div class="category-simple-number">02</div><div class="category-info"><h3>Paper Cups</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-plate" class="category-card category-card-simple"><div class="category-simple-number">03</div><div class="category-info"><h3>Paper Plates</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-bag" class="category-card category-card-simple"><div class="category-simple-number">04</div><div class="category-info"><h3>Paper Bags</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-tablecloth" class="category-card category-card-simple"><div class="category-simple-number">05</div><div class="category-info"><h3>Paper Tablecloths</h3><span>Shop collection →</span></div></a>
-      <a href="#category-plastic-tablecloth" class="category-card category-card-simple"><div class="category-simple-number">06</div><div class="category-info"><h3>Plastic Tablecloths</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-banner" class="category-card category-card-simple"><div class="category-simple-number">07</div><div class="category-info"><h3>Paper Banners</h3><span>Shop collection →</span></div></a>
-      <a href="#category-paper-hat" class="category-card category-card-simple"><div class="category-simple-number">08</div><div class="category-info"><h3>Paper Hats</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Napkin" class="category-card category-card-simple"><div class="category-simple-number">01</div><div class="category-info"><h3>Paper Napkins</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Cup" class="category-card category-card-simple"><div class="category-simple-number">02</div><div class="category-info"><h3>Paper Cups</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Plate" class="category-card category-card-simple"><div class="category-simple-number">03</div><div class="category-info"><h3>Paper Plates</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Bag" class="category-card category-card-simple"><div class="category-simple-number">04</div><div class="category-info"><h3>Paper Bags</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Tablecloth" class="category-card category-card-simple"><div class="category-simple-number">05</div><div class="category-info"><h3>Paper Tablecloths</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Plastic Tablecloth" class="category-card category-card-simple"><div class="category-simple-number">06</div><div class="category-info"><h3>Plastic Tablecloths</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Banner" class="category-card category-card-simple"><div class="category-simple-number">07</div><div class="category-info"><h3>Paper Banners</h3><span>Shop collection →</span></div></a>
+      <a href="#products" data-shop-category="Paper Hat" class="category-card category-card-simple"><div class="category-simple-number">08</div><div class="category-info"><h3>Paper Hats</h3><span>Shop collection →</span></div></a>
     </div>
   </section>
 
@@ -63,22 +63,38 @@
       <p class="section-description">Explore our best sellers, then browse each collection by category.</p>
     </div>
 
-    <div id="best-sellers-section" class="product-category-block">
-      <div class="product-category-heading">
-        <div>
-          <p class="eyebrow">CUSTOMER FAVORITES</p>
-          <h3>Best Sellers</h3>
-        </div>
-      </div>
-      <div id="best-sellers-grid" class="grid"></div>
+    <div class="shop-switcher">
+      <button class="shop-tab is-active" type="button" data-shop-category="best">Best Sellers</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Napkin">Paper Napkins</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Cup">Paper Cups</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Plate">Paper Plates</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Bag">Paper Bags</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Tablecloth">Paper Tablecloths</button>
+      <button class="shop-tab" type="button" data-shop-category="Plastic Tablecloth">Plastic Tablecloths</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Banner">Paper Banners</button>
+      <button class="shop-tab" type="button" data-shop-category="Paper Hat">Paper Hats</button>
     </div>
-
-    <div id="category-products"></div>
+    <div class="product-category-heading shop-current-heading">
+      <div>
+        <p class="eyebrow" id="shop-current-eyebrow">CUSTOMER FAVORITES</p>
+        <h3 id="shop-current-title">Best Sellers</h3>
+      </div>
+      <div class="shop-pagination" id="shop-pagination"></div>
+    </div>
+    <div id="shop-product-grid" class="grid shop-product-grid"></div>
   </section>
 
   <section class="story-section" id="about">
-    <div class="story-image"></div>
     <div class="story-content">
+      <p class="eyebrow">OUR STORY</p>
+      <h2>From a small New York party shop to celebrations around the world.</h2>
+      <p>MUCHIN began in 1995 as a small party shop in New York, built around a simple belief: every celebration deserves to feel special.</p>
+      <p>Over the years, that little shop grew into eight stores, serving families and party lovers with products for birthdays, holidays, gatherings and all the moments in between.</p>
+      <p>In 2020, MUCHIN entered a new chapter by joining forces with Chinese manufacturing partners. We closed our physical stores and moved online, combining our understanding of party culture with professional product development and manufacturing.</p>
+      <p>Today, MUCHIN brings thoughtfully designed party supplies directly to customers around the world. More than 1 million customers have already chosen MUCHIN to be part of their celebrations.</p>
+      <a href="#products" class="text-link">Shop the collection →</a>
+    </div>
+    <div class="story-image"></div>
       <p class="eyebrow">OUR STORY</p>
       <h2>From a small New York party shop to celebrations around the world.</h2>
       <p>MUCHIN began in 1995 as a small party shop in New York, built around a simple belief: every celebration deserves to feel special.</p>
@@ -92,23 +108,20 @@
   <section class="benefits-section brand-advantages">
     <div class="brand-advantage-intro">
       <p class="eyebrow">WHY MUCHIN</p>
-      <h2>Made with experience, creativity and care.</h2>
+      <h2>Experience, creativity and care — behind every celebration.</h2>
     </div>
 
     <div class="benefit">
-      <div class="benefit-number">01</div>
       <h3>A Legacy of Celebration</h3>
       <p>Since 1995, we have built our experience around one thing: helping people make their celebrations more special.</p>
     </div>
 
     <div class="benefit">
-      <div class="benefit-number">02</div>
       <h3>Original Design</h3>
       <p>Our collections are developed with original ideas, fresh patterns and details designed to make every party feel distinctive.</p>
     </div>
 
     <div class="benefit">
-      <div class="benefit-number">03</div>
       <h3>Quality & Compliance</h3>
       <p>We maintain strict control over materials, production, testing and quality standards so customers can shop with confidence.</p>
     </div>
