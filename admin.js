@@ -1,12 +1,12 @@
 ```javascript
-const supabase = supabaseClient;
+const client = supabaseClient;
 
 let editingProductId = null;
 
 
-// ================================
+// ========================================
 // LOGIN
-// ================================
+// ========================================
 
 const loginForm = document.getElementById("login-form");
 const loginBox = document.getElementById("login-box");
@@ -14,37 +14,42 @@ const adminContent = document.getElementById("admin-content");
 const logoutBtn = document.getElementById("logout-btn");
 
 
-loginForm.addEventListener("submit", async (e) => {
+loginForm.addEventListener("submit", async function (e) {
 
   e.preventDefault();
 
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    alert(error.message);
+  if (!email || !password) {
+    alert("Please enter your email and password.");
     return;
   }
 
-  if (data.user) {
+  const { data, error } = await client.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    alert("Login failed: " + error.message);
+    return;
+  }
+
+  if (data && data.user) {
     await showAdmin();
   }
 
 });
 
 
-// ================================
+// ========================================
 // LOGOUT
-// ================================
+// ========================================
 
-logoutBtn.addEventListener("click", async () => {
+logoutBtn.addEventListener("click", async function () {
 
-  await supabase.auth.signOut();
+  await client.auth.signOut();
 
   adminContent.style.display = "none";
   loginBox.style.display = "block";
@@ -52,9 +57,9 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 
-// ================================
-// INITIAL CHECK
-// ================================
+// ========================================
+// CHECK EXISTING SESSION
+// ========================================
 
 checkSession();
 
@@ -63,7 +68,7 @@ async function checkSession() {
 
   const {
     data: { session }
-  } = await supabase.auth.getSession();
+  } = await client.auth.getSession();
 
   if (session) {
     await showAdmin();
@@ -72,9 +77,9 @@ async function checkSession() {
 }
 
 
-// ================================
+// ========================================
 // SHOW ADMIN
-// ================================
+// ========================================
 
 async function showAdmin() {
 
@@ -87,27 +92,26 @@ async function showAdmin() {
 }
 
 
-// ================================
-// PRODUCTS
-// ================================
+// ========================================
+// LOAD PRODUCTS
+// ========================================
 
 async function loadProducts() {
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("products")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
-    alert(error.message);
+    alert("Unable to load products: " + error.message);
     return;
   }
 
   const container = document.getElementById("products-admin");
 
-  document.getElementById("product-count").textContent =
-    data.length;
+  document.getElementById("product-count").textContent = data.length;
 
   if (!data.length) {
 
@@ -121,25 +125,34 @@ async function loadProducts() {
   }
 
 
-  container.innerHTML = data.map(product => {
+  container.innerHTML = data.map(function (product) {
 
     const image = product.image_url
-      ? `<img src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}">`
-      : `<div class="product-image-placeholder">No image</div>`;
+      ? `
+        <img
+          src="${escapeHtml(product.image_url)}"
+          alt="${escapeHtml(product.name)}"
+        >
+      `
+      : `
+        <div class="product-image-placeholder">
+          No image
+        </div>
+      `;
 
 
     return `
-
       <div class="admin-product-row">
 
         <div class="admin-product-image">
           ${image}
         </div>
 
-
         <div class="admin-product-info">
 
-          <h3>${escapeHtml(product.name)}</h3>
+          <h3>
+            ${escapeHtml(product.name)}
+          </h3>
 
           <p>
             ${escapeHtml(product.description || "")}
@@ -163,7 +176,6 @@ async function loadProducts() {
 
         </div>
 
-
         <div class="admin-product-actions">
 
           <button
@@ -173,14 +185,12 @@ async function loadProducts() {
             Edit
           </button>
 
-
           <button
             class="small-btn"
             onclick="toggleProduct('${product.id}', ${product.active})"
           >
             ${product.active ? "Hide" : "Publish"}
           </button>
-
 
           <button
             class="small-btn danger-btn"
@@ -192,7 +202,6 @@ async function loadProducts() {
         </div>
 
       </div>
-
     `;
 
   }).join("");
@@ -200,161 +209,168 @@ async function loadProducts() {
 }
 
 
-// ================================
+// ========================================
 // ADD PRODUCT
-// ================================
+// ========================================
 
-document.getElementById("add-product-btn").addEventListener("click", () => {
+document.getElementById("add-product-btn").addEventListener(
+  "click",
+  function () {
 
-  editingProductId = null;
+    editingProductId = null;
 
-  document.getElementById("product-form").reset();
+    document.getElementById("product-form").reset();
 
-  document.getElementById("product-id").value = "";
+    document.getElementById("product-id").value = "";
 
-  document.getElementById("product-active").checked = true;
+    document.getElementById("product-active").checked = true;
 
-  document.getElementById("product-form-title").textContent =
-    "Add Product";
+    document.getElementById("product-form-title").textContent =
+      "Add Product";
 
-  document.getElementById("product-form-message").textContent = "";
+    document.getElementById("product-form-message").textContent = "";
 
-  document.getElementById("product-form-box").style.display = "block";
+    document.getElementById("product-form-box").style.display =
+      "block";
 
-  window.scrollTo({
-    top: document.getElementById("product-form-box").offsetTop - 30,
-    behavior: "smooth"
-  });
+    document.getElementById("product-form-box").scrollIntoView({
+      behavior: "smooth"
+    });
 
-});
-
-
-// ================================
-// CANCEL
-// ================================
-
-document.getElementById("cancel-product-btn").addEventListener("click", () => {
-
-  document.getElementById("product-form-box").style.display = "none";
-
-  editingProductId = null;
-
-});
+  }
+);
 
 
-// ================================
+// ========================================
+// CANCEL PRODUCT
+// ========================================
+
+document.getElementById("cancel-product-btn").addEventListener(
+  "click",
+  function () {
+
+    document.getElementById("product-form-box").style.display =
+      "none";
+
+    editingProductId = null;
+
+  }
+);
+
+
+// ========================================
 // SAVE PRODUCT
-// ================================
+// ========================================
 
-document.getElementById("product-form").addEventListener("submit", async (e) => {
+document.getElementById("product-form").addEventListener(
+  "submit",
+  async function (e) {
 
-  e.preventDefault();
+    e.preventDefault();
 
+    const name =
+      document.getElementById("product-name").value.trim();
 
-  const name =
-    document.getElementById("product-name").value.trim();
+    const description =
+      document.getElementById("product-description").value.trim();
 
-  const description =
-    document.getElementById("product-description").value.trim();
+    const price =
+      Number(document.getElementById("product-price").value);
 
-  const price =
-    Number(document.getElementById("product-price").value);
+    const stock =
+      Number(document.getElementById("product-stock").value);
 
-  const stock =
-    Number(document.getElementById("product-stock").value);
+    const image_url =
+      document.getElementById("product-image").value.trim();
 
-  const image_url =
-    document.getElementById("product-image").value.trim();
-
-  const active =
-    document.getElementById("product-active").checked;
-
-
-  if (!name) {
-    alert("Please enter a product name.");
-    return;
-  }
-
-  if (price < 0 || Number.isNaN(price)) {
-    alert("Please enter a valid price.");
-    return;
-  }
-
-  if (stock < 0 || Number.isNaN(stock)) {
-    alert("Please enter a valid stock quantity.");
-    return;
-  }
+    const active =
+      document.getElementById("product-active").checked;
 
 
-  const productData = {
-    name,
-    description,
-    price,
-    stock,
-    image_url,
-    active
-  };
+    if (!name) {
+      alert("Please enter a product name.");
+      return;
+    }
+
+    if (Number.isNaN(price) || price < 0) {
+      alert("Please enter a valid price.");
+      return;
+    }
+
+    if (Number.isNaN(stock) || stock < 0) {
+      alert("Please enter a valid stock quantity.");
+      return;
+    }
 
 
-  const message =
-    document.getElementById("product-form-message");
-
-  message.textContent = "Saving...";
-
-
-  let result;
-
-
-  if (editingProductId) {
-
-    result = await supabase
-      .from("products")
-      .update(productData)
-      .eq("id", editingProductId);
-
-  } else {
-
-    result = await supabase
-      .from("products")
-      .insert(productData);
-
-  }
+    const productData = {
+      name: name,
+      description: description,
+      price: price,
+      stock: stock,
+      image_url: image_url,
+      active: active
+    };
 
 
-  if (result.error) {
+    const message =
+      document.getElementById("product-form-message");
 
-    console.error(result.error);
+    message.textContent = "Saving...";
+
+
+    let result;
+
+
+    if (editingProductId) {
+
+      result = await client
+        .from("products")
+        .update(productData)
+        .eq("id", editingProductId);
+
+    } else {
+
+      result = await client
+        .from("products")
+        .insert(productData);
+
+    }
+
+
+    if (result.error) {
+
+      console.error(result.error);
+
+      message.textContent =
+        "Error: " + result.error.message;
+
+      return;
+
+    }
+
 
     message.textContent =
-      "Error: " + result.error.message;
+      "Saved successfully.";
 
-    return;
+    document.getElementById("product-form-box").style.display =
+      "none";
+
+    editingProductId = null;
+
+    await loadProducts();
 
   }
+);
 
 
-  message.textContent = "Saved successfully.";
-
-
-  document.getElementById("product-form-box").style.display =
-    "none";
-
-
-  editingProductId = null;
-
-
-  await loadProducts();
-
-});
-
-
-// ================================
+// ========================================
 // EDIT PRODUCT
-// ================================
+// ========================================
 
-window.editProduct = async function(id) {
+window.editProduct = async function (id) {
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("products")
     .select("*")
     .eq("id", id)
@@ -364,7 +380,6 @@ window.editProduct = async function(id) {
   if (error) {
 
     alert(error.message);
-
     return;
 
   }
@@ -398,36 +413,30 @@ window.editProduct = async function(id) {
   document.getElementById("product-form-title").textContent =
     "Edit Product";
 
-
   document.getElementById("product-form-message").textContent =
     "";
-
 
   document.getElementById("product-form-box").style.display =
     "block";
 
 
-  window.scrollTo({
-    top: document.getElementById("product-form-box").offsetTop - 30,
+  document.getElementById("product-form-box").scrollIntoView({
     behavior: "smooth"
   });
 
 };
 
 
-// ================================
+// ========================================
 // HIDE / PUBLISH
-// ================================
+// ========================================
 
-window.toggleProduct = async function(id, currentStatus) {
+window.toggleProduct = async function (id, currentStatus) {
 
-  const newStatus = !currentStatus;
-
-
-  const { error } = await supabase
+  const { error } = await client
     .from("products")
     .update({
-      active: newStatus
+      active: !currentStatus
     })
     .eq("id", id);
 
@@ -435,7 +444,6 @@ window.toggleProduct = async function(id, currentStatus) {
   if (error) {
 
     alert(error.message);
-
     return;
 
   }
@@ -446,11 +454,11 @@ window.toggleProduct = async function(id, currentStatus) {
 };
 
 
-// ================================
-// DELETE
-// ================================
+// ========================================
+// DELETE PRODUCT
+// ========================================
 
-window.deleteProduct = async function(id) {
+window.deleteProduct = async function (id) {
 
   const confirmed = confirm(
     "Are you sure you want to delete this product?"
@@ -462,7 +470,7 @@ window.deleteProduct = async function(id) {
   }
 
 
-  const { error } = await supabase
+  const { error } = await client
     .from("products")
     .delete()
     .eq("id", id);
@@ -471,7 +479,6 @@ window.deleteProduct = async function(id) {
   if (error) {
 
     alert(error.message);
-
     return;
 
   }
@@ -482,13 +489,13 @@ window.deleteProduct = async function(id) {
 };
 
 
-// ================================
-// ORDERS
-// ================================
+// ========================================
+// LOAD ORDERS
+// ========================================
 
 async function loadOrders() {
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("orders")
     .select("*")
     .order("created_at", { ascending: false });
@@ -526,72 +533,71 @@ async function loadOrders() {
   }
 
 
-  document.getElementById("orders").innerHTML = data.map(order => {
+  document.getElementById("orders").innerHTML =
+    data.map(function (order) {
 
-    return `
+      return `
+        <div class="card admin-order">
 
-      <div class="card admin-order">
+          <div class="admin-order-top">
 
-        <div class="admin-order-top">
+            <div>
 
-          <div>
+              <span class="order-label">
+                Order
+              </span>
 
-            <span class="order-label">
-              Order
+              <h3>
+                ${escapeHtml(order.id)}
+              </h3>
+
+            </div>
+
+            <span class="order-status">
+              ${escapeHtml(order.status || "pending")}
             </span>
-
-            <h3>
-              ${escapeHtml(order.id)}
-            </h3>
 
           </div>
 
+          <div class="admin-order-details">
 
-          <span class="order-status">
-            ${escapeHtml(order.status || "pending")}
-          </span>
+            <p>
+              <strong>Customer:</strong>
+              ${escapeHtml(order.customer_name || "")}
+            </p>
 
-        </div>
+            <p>
+              <strong>Email:</strong>
+              ${escapeHtml(order.customer_email || "")}
+            </p>
 
+            <p>
+              <strong>Total:</strong>
+              $${Number(order.total || 0).toFixed(2)}
+            </p>
 
-        <div class="admin-order-details">
+            <p>
+              <strong>Date:</strong>
+              ${
+                order.created_at
+                  ? new Date(order.created_at).toLocaleString()
+                  : ""
+              }
+            </p>
 
-          <p>
-            <strong>Customer:</strong>
-            ${escapeHtml(order.customer_name || "")}
-          </p>
-
-          <p>
-            <strong>Email:</strong>
-            ${escapeHtml(order.customer_email || "")}
-          </p>
-
-          <p>
-            <strong>Total:</strong>
-            $${Number(order.total || 0).toFixed(2)}
-          </p>
-
-          <p>
-            <strong>Date:</strong>
-            ${order.created_at
-              ? new Date(order.created_at).toLocaleString()
-              : ""}
-          </p>
+          </div>
 
         </div>
+      `;
 
-      </div>
-
-    `;
-
-  }).join("");
+    }).join("");
 
 }
 
 
-// ================================
-// HTML ESCAPE
-// ================================
+// ========================================
+// ESCAPE HTML
+// ========================================
 
 function escapeHtml(value) {
 
