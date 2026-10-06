@@ -2534,3 +2534,8 @@ footer {
   grid-template-columns:1.25fr repeat(3,1fr);
   gap:48px;
 }
+
+/* Shop section top spacing */
+.products-section{
+  padding-top:30px;
+}
