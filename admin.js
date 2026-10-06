@@ -499,100 +499,102 @@ async function loadOrders() {
     .select("*")
     .order("created_at", { ascending: false });
 
-
   if (error) {
-
     console.error(error);
-
     document.getElementById("orders").innerHTML = `
       <div class="card">
-        <p>Unable to load orders.</p>
+        <p>Unable to load orders: ${escapeHtml(error.message)}</p>
       </div>
     `;
-
     return;
-
   }
 
-
-  document.getElementById("order-count").textContent =
-    data.length;
-
+  document.getElementById("order-count").textContent = data.length;
 
   if (!data.length) {
-
     document.getElementById("orders").innerHTML = `
       <div class="card empty-admin">
         <p>No orders yet.</p>
       </div>
     `;
-
     return;
-
   }
 
+  document.getElementById("orders").innerHTML = data.map(function (order) {
+    const status = (order.status || "pending").toLowerCase();
+    const orderNumber = order.order_number || order.id;
+    const safeId = escapeHtml(order.id);
 
-  document.getElementById("orders").innerHTML =
-    data.map(function (order) {
-
-      return `
-        <div class="card admin-order">
-
-          <div class="admin-order-top">
-
-            <div>
-
-              <span class="order-label">
-                Order
-              </span>
-
-              <h3>
-                ${escapeHtml(order.id)}
-              </h3>
-
-            </div>
-
-            <span class="order-status">
-              ${escapeHtml(order.status || "pending")}
-            </span>
-
+    return `
+      <article class="card admin-order">
+        <div class="admin-order-top">
+          <div>
+            <span class="order-label">Order</span>
+            <h3>#${escapeHtml(orderNumber)}</h3>
           </div>
-
-          <div class="admin-order-details">
-
-            <p>
-              <strong>Customer:</strong>
-              ${escapeHtml(order.customer_name || "")}
-            </p>
-
-            <p>
-              <strong>Email:</strong>
-              ${escapeHtml(order.customer_email || "")}
-            </p>
-
-            <p>
-              <strong>Total:</strong>
-              $${Number(order.total || 0).toFixed(2)}
-            </p>
-
-            <p>
-              <strong>Date:</strong>
-              ${
-                order.created_at
-                  ? new Date(order.created_at).toLocaleString()
-                  : ""
-              }
-            </p>
-
-          </div>
-
+          <span class="order-status admin-status-${escapeHtml(status)}">${escapeHtml(status)}</span>
         </div>
-      `;
 
-    }).join("");
+        <div class="admin-order-details">
+          <p><strong>Customer:</strong> ${escapeHtml(order.customer_name || "")}</p>
+          <p><strong>Email:</strong> ${escapeHtml(order.customer_email || "")}</p>
+          <p><strong>Shipping:</strong> ${escapeHtml([order.shipping_address, order.city, order.country].filter(Boolean).join(", "))}</p>
+          <p><strong>Total:</strong> $${Number(order.total || 0).toFixed(2)}</p>
+          <p><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleString() : ""}</p>
+          <p><strong>Tracking:</strong> ${escapeHtml(order.tracking_number || "Not added")}</p>
+        </div>
 
+        <div class="admin-order-update">
+          <div class="admin-order-field">
+            <label for="status-${safeId}">Order status</label>
+            <select id="status-${safeId}" data-order-status="${safeId}">
+              <option value="pending" ${status === "pending" ? "selected" : ""}>Pending</option>
+              <option value="paid" ${status === "paid" ? "selected" : ""}>Paid</option>
+              <option value="shipped" ${status === "shipped" ? "selected" : ""}>Shipped</option>
+              <option value="cancelled" ${status === "cancelled" ? "selected" : ""}>Cancelled</option>
+            </select>
+          </div>
+          <div class="admin-order-field">
+            <label for="tracking-${safeId}">Tracking number</label>
+            <input id="tracking-${safeId}" type="text" value="${escapeHtml(order.tracking_number || "")}" placeholder="Enter tracking number" data-order-tracking="${safeId}">
+          </div>
+          <button class="small-btn admin-order-save" type="button" onclick="updateOrder('${safeId}')">Save</button>
+          <span id="order-message-${safeId}" class="admin-order-message"></span>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 
+
+// ========================================
+// UPDATE ORDER
+// ========================================
+
+window.updateOrder = async function (id) {
+  const status = document.querySelector('[data-order-status="' + id + '"]').value;
+  const tracking = document.querySelector('[data-order-tracking="' + id + '"]').value.trim();
+  const message = document.getElementById("order-message-" + id);
+
+  message.textContent = "Saving...";
+
+  const { error } = await client
+    .from("orders")
+    .update({
+      status: status,
+      tracking_number: tracking || null
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    message.textContent = "Error: " + error.message;
+    return;
+  }
+
+  message.textContent = "Saved.";
+  await loadOrders();
+};
 
 // ========================================
 // ESCAPE HTML
