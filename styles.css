@@ -2479,3 +2479,9 @@ footer {
   .story-copy p{font-size:14px;line-height:1.8}
   .story-closing{padding:78px 24px}
 }
+
+
+/* Shop section starts directly below the previous section */
+.products-section{
+  padding-top:0;
+}
