@@ -2511,3 +2511,14 @@ footer {
     transform:none;
   }
 }
+
+/* Keep the brand advantages heading on one line */
+.brand-advantage-intro h2{
+  max-width:none;
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .brand-advantage-intro h2{
+    white-space:normal;
+  }
+}
