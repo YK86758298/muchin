@@ -176,7 +176,7 @@ async function loadCart(){
       <img class="cart-item-image" src="${escapeHtml(x.image_url || "https://placehold.co/160x160?text=Product")}" alt="${escapeHtml(x.name)}">
       <div class="cart-item-details">
         <b>${escapeHtml(x.name)}</b>
-        <div class="cart-item-price">\${Number(x.price).toFixed(2)} each</div>
+        <div class="cart-item-price">${Number(x.price).toFixed(2)} each</div>
         <div class="cart-quantity">
           <button type="button" class="quantity-btn" data-action="minus" data-id="${escapeHtml(x.id)}" ${x.qty<=1?"disabled":""} aria-label="Decrease quantity">−</button>
           <span class="quantity-value">${x.qty}</span>
@@ -185,7 +185,7 @@ async function loadCart(){
       </div>
     </div>
     <div class="cart-item-actions">
-      <strong class="cart-item-subtotal">\${(Number(x.price)*x.qty).toFixed(2)}</strong>
+      <strong class="cart-item-subtotal">${(Number(x.price)*x.qty).toFixed(2)}</strong>
       <button class="remove" data-id="${escapeHtml(x.id)}">Remove</button>
     </div>
   </div>`).join("");
