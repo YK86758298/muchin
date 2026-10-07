@@ -2683,7 +2683,7 @@ body.admin-page,
   height:150px;
   background-color:var(--cream);
   background-position:center;
-  background-size:cover;
+  background-size:contain;
   background-repeat:no-repeat;
 }
 .category-card-image:not(.has-image){
@@ -2719,7 +2719,8 @@ body.admin-page,
 .site-setting-preview img{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
+  background:var(--cream);
 }
 .site-setting-body{
   padding:20px;
