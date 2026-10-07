@@ -387,17 +387,17 @@ async function loadOrders(){
   const {data,error}=await client.from("orders").select("*").order("created_at",{ascending:false});
   if(error){
     console.error(error);
-    document.getElementById("orders").innerHTML='<div class="card"><p>Unable to load orders: '+escapeHtml(error.message)+'</p></div>';
+    document.getElementById("orders-list").innerHTML='<div class="card"><p>Unable to load orders: '+escapeHtml(error.message)+'</p></div>';
     return;
   }
 
   document.getElementById("order-count").textContent=data.length;
   if(!data.length){
-    document.getElementById("orders").innerHTML='<div class="card empty-admin"><p>No orders yet.</p></div>';
+    document.getElementById("orders-list").innerHTML='<div class="card empty-admin"><p>No orders yet.</p></div>';
     return;
   }
 
-  document.getElementById("orders").innerHTML=data.map(function(order){
+  document.getElementById("orders-list").innerHTML=data.map(function(order){
     const status=(order.status||"pending").toLowerCase();
     const orderNumber=order.order_number||order.id;
     const safeId=escapeHtml(order.id);
