@@ -13,7 +13,26 @@ const CATEGORY_DEFS = [
 
 function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
 function saveCart(cart){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartCount(); }
-function updateCartCount(){ const n=getCart().reduce((s,x)=>s+x.qty,0); document.querySelectorAll("#cart-count").forEach(x=>x.textContent=n); }
+function updateCartCount(){
+  const n=getCart().reduce((s,x)=>s+x.qty,0);
+  document.querySelectorAll("#cart-count").forEach(x=>x.textContent=n);
+  const floatingCount=document.getElementById("floating-cart-count");
+  if(floatingCount)floatingCount.textContent=n;
+  const floatingCart=document.getElementById("floating-cart");
+  if(floatingCart)floatingCart.classList.toggle("has-items",n>0);
+}
+
+function setupFloatingCart(){
+  if(document.querySelector(".floating-cart") || location.pathname.endsWith("/cart.html") || location.pathname.endsWith("cart.html"))return;
+  const link=document.createElement("a");
+  link.href="cart.html";
+  link.className="floating-cart";
+  link.id="floating-cart";
+  link.setAttribute("aria-label","Open shopping cart");
+  link.innerHTML='<span class="floating-cart-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H6"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/></svg></span><span class="floating-cart-label">Cart</span><span class="floating-cart-count" id="floating-cart-count">0</span>';
+  document.body.appendChild(link);
+  updateCartCount();
+}
 
 function escapeHtml(value){
   return String(value ?? "")
@@ -157,16 +176,37 @@ async function loadCart(){
       <img class="cart-item-image" src="${escapeHtml(x.image_url || "https://placehold.co/160x160?text=Product")}" alt="${escapeHtml(x.name)}">
       <div class="cart-item-details">
         <b>${escapeHtml(x.name)}</b>
-        <div>${Number(x.price).toFixed(2)} × ${x.qty}</div>
+        <div class="cart-item-price">\${Number(x.price).toFixed(2)} each</div>
+        <div class="cart-quantity">
+          <button type="button" class="quantity-btn" data-action="minus" data-id="${escapeHtml(x.id)}" ${x.qty<=1?"disabled":""} aria-label="Decrease quantity">−</button>
+          <span class="quantity-value">${x.qty}</span>
+          <button type="button" class="quantity-btn" data-action="plus" data-id="${escapeHtml(x.id)}" aria-label="Increase quantity">+</button>
+        </div>
       </div>
     </div>
-    <button class="remove" data-id="${escapeHtml(x.id)}">Remove</button>
+    <div class="cart-item-actions">
+      <strong class="cart-item-subtotal">\${(Number(x.price)*x.qty).toFixed(2)}</strong>
+      <button class="remove" data-id="${escapeHtml(x.id)}">Remove</button>
+    </div>
   </div>`).join("");
-  document.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{saveCart(getCart().filter(x=>x.id!==b.dataset.id));loadCart();});
+  document.querySelectorAll(".quantity-btn").forEach(b=>b.onclick=()=>{
+    const cart=getCart();
+    const item=cart.find(x=>x.id===b.dataset.id);
+    if(!item)return;
+    if(b.dataset.action==="plus")item.qty++;
+    else if(item.qty>1)item.qty--;
+    saveCart(cart);
+    loadCart();
+  });
+  document.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{
+    saveCart(getCart().filter(x=>x.id!==b.dataset.id));
+    loadCart();
+  });
   const total=cart.reduce((s,x)=>s+Number(x.price)*x.qty,0);
   document.getElementById("cart-total").innerHTML=`<h2>Total: ${total.toFixed(2)}</h2>`;
 }
 
+setupFloatingCart();
 updateCartCount();
 loadProducts();
 loadCart();
