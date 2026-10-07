@@ -441,7 +441,7 @@ window.updateOrder=async function(id){
   const tracking=document.querySelector('[data-order-tracking="'+id+'"]').value.trim();
   const message=document.getElementById("order-message-"+id);
   message.textContent="Saving...";
-  const {error}=await client.from("orders").update({status,tracking_number:tracking||null}).eq("id",id);
+  const {error}=await client.rpc("admin_update_order",{p_order_id:id,p_status:status,p_tracking_number:tracking||null});
   if(error){console.error(error);message.textContent="Error: "+error.message;return;}
   message.textContent="Saved.";
   await loadOrders();
