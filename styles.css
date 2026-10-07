@@ -115,14 +115,9 @@ padding: 8%;
 display: flex;
 align-items: center;
 
-background:
-linear-gradient(
-90deg,
-rgba(245,242,235,0.98) 0%,
-rgba(245,242,235,0.85) 38%,
-rgba(245,242,235,0.2) 75%
-),
-
+background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
 }
 
 .hero-content {
