@@ -87,12 +87,11 @@ async function loadProducts(){
   }).join("");
 }
 
-
 const PRODUCT_CSV_HEADERS=["name","description","price","stock","category","image_url","image_file","best_seller","active"];
 
 document.getElementById("download-products-template")?.addEventListener("click",function(){
-  const csv=PRODUCT_CSV_HEADERS.join(",")+"\n"+"Example Floral Napkin,Beautiful printed paper napkin,8.90,100,Paper Napkin,,floral-napkin.jpg,true,true\n";
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const csv=PRODUCT_CSV_HEADERS.join(",")+"\r\n"+"Example Floral Napkin,Beautiful printed paper napkin,8.90,100,Paper Napkin,,floral-napkin.jpg,true,true\r\n";
+  const blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8;"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
@@ -130,8 +129,9 @@ document.getElementById("import-products-btn")?.addEventListener("click",async f
   if(!file){message.textContent="Choose a CSV file first.";return;}
   message.textContent="Reading CSV...";
   try{
-    const text=await file.text();
-    const rows=parseCSV(text.replace(/^\\uFEFF/,""));
+    const csvText=await file.text();
+    const text=csvText.replace(/^\uFEFF/,"");
+    const rows=parseCSV(text);
     if(rows.length<2)throw new Error("The CSV must contain a header row and at least one product.");
     const headers=rows[0].map(x=>x.trim().toLowerCase());
     const missing=PRODUCT_CSV_HEADERS.filter(h=>!headers.includes(h));
@@ -169,12 +169,12 @@ document.getElementById("import-products-btn")?.addEventListener("click",async f
     message.textContent="Uploading images and importing "+products.length+" products...";
     for(const product of products){
       if(product.image_file){
-        const file=imageMap.get(product.image_file);
-        if(!file) throw new Error("Image not found for \""+product.name+"\": "+product.image_file);
-        const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+        const imageFile=imageMap.get(product.image_file);
+        if(!imageFile) throw new Error("Image not found for \""+product.name+"\": "+product.image_file);
+        const ext=(imageFile.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
         const base=(product.name||"product").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"product";
         const path="products/"+base+"-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
-        const {error:uploadError}=await client.storage.from("site-images").upload(path,file,{contentType:file.type,upsert:false});
+        const {error:uploadError}=await client.storage.from("site-images").upload(path,imageFile,{contentType:imageFile.type,upsert:false});
         if(uploadError) throw new Error("Image upload failed for "+product.name+": "+uploadError.message);
         const {data:publicData}=client.storage.from("site-images").getPublicUrl(path);
         product.image_url=publicData.publicUrl;
@@ -220,11 +220,11 @@ function parseCSV(text){
     }else{
       if(c==='"' && cell==="")quoted=true;
       else if(c===','){row.push(cell);cell="";}
-      else if(c==='\\n'){row.push(cell);rows.push(row);row=[];cell="";}
-      else if(c!=='\\r')cell+=c;
+      else if(c==='\n'){row.push(cell);rows.push(row);row=[];cell="";}
+      else if(c!=='\r')cell+=c;
     }
   }
-  row.push(cell); rows.push(row);
+  if(cell!==""||row.length){row.push(cell);rows.push(row);}
   return rows;
 }
 
@@ -313,7 +313,6 @@ window.deleteProduct=async function(id){
   if(error){alert(error.message);return;}
   await loadProducts();
 };
-
 
 const SITE_IMAGE_SETTINGS = [
   {key:"hero_image", label:"Hero Main Image", folder:"hero"},
