@@ -2764,7 +2764,7 @@ body.admin-page,
 .quantity-btn{width:30px;height:30px;padding:0;border:0;background:transparent;color:var(--ink);font-size:17px;line-height:1;cursor:pointer}
 .quantity-btn:hover:not(:disabled){background:var(--cream)}
 .quantity-btn:disabled{color:#bbb;cursor:default}
-.quantity-value{min-width:34px;text-align:center;font-size:12px;font-weight:600}
+.quantity-value{width:44px;height:30px;padding:0 4px;border:0;background:transparent;color:var(--ink);font:inherit;font-size:12px;font-weight:600;text-align:center;outline:none;appearance:textfield;-moz-appearance:textfield}.quantity-value::-webkit-outer-spin-button,.quantity-value::-webkit-inner-spin-button{margin:0;-webkit-appearance:none}.quantity-value:focus{background:var(--cream)}
 .cart-item-actions{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:12px}
 .cart-item-subtotal{font-size:14px;white-space:nowrap}
 @media(max-width:600px){.floating-cart{right:18px;bottom:70px;height:50px;min-width:50px;padding:0 12px}.floating-cart-label{display:none}.cart-item-actions{align-items:flex-end}}
