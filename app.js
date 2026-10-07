@@ -170,5 +170,23 @@ async function loadCart(){
 updateCartCount();
 loadProducts();
 loadCart();
+loadSiteSettings();
 
-function loadSiteSettings(){ return Promise.resolve(); }
+async function loadSiteSettings(){
+  const hero=document.querySelector(".hero");
+  const imageSlots=document.querySelectorAll("[data-site-image]");
+  if(!hero && !imageSlots.length)return;
+  const {data,error}=await supabaseClient.from("site_settings").select("key,value");
+  if(error)return;
+  const settings=Object.fromEntries((data||[]).map(x=>[x.key,x.value]));
+  if(hero && settings.hero_image){
+    hero.style.backgroundImage=`linear-gradient(90deg,rgba(245,242,235,0.98) 0%,rgba(245,242,235,0.85) 38%,rgba(245,242,235,0.2) 75%),url("${settings.hero_image}")`;
+  }
+  imageSlots.forEach(el=>{
+    const url=settings[el.dataset.siteImage];
+    if(url){
+      el.style.backgroundImage=`url("${url}")`;
+      el.classList.add("has-image");
+    }
+  });
+}
