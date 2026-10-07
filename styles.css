@@ -2753,3 +2753,9 @@ body.admin-page,
   .site-settings-grid{grid-template-columns:1fr}
   .site-setting-preview{height:180px}
 }
+
+.bulk-import{margin:0 0 24px;padding:24px}
+.bulk-import .admin-form-heading{margin-bottom:10px}
+.bulk-import .page-intro{margin:0 0 16px;max-width:900px}
+.bulk-import-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bulk-import-controls input[type=file]{max-width:100%}
