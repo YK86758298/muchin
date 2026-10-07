@@ -299,8 +299,9 @@ overflow: hidden;
 .product img {
 width: 100%;
 aspect-ratio: 1 / 1.08;
-object-fit: cover;
+object-fit: contain;
 display: block;
+background: #fff;
 
 transition: transform 0.5s ease;
 }
@@ -2767,3 +2768,12 @@ body.admin-page,
 .cart-item-actions{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:12px}
 .cart-item-subtotal{font-size:14px;white-space:nowrap}
 @media(max-width:600px){.floating-cart{right:18px;bottom:70px;height:50px;min-width:50px;padding:0 12px}.floating-cart-label{display:none}.cart-item-actions{align-items:flex-end}}
+
+
+/* Shop product images: show the complete image on its long side without cropping */
+.shop-product-grid .product img{
+  width:100%;
+  aspect-ratio:1 / 1.08;
+  object-fit:contain;
+  background:#fff;
+}
