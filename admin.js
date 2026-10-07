@@ -214,15 +214,20 @@ async function uploadSiteImage(key){
   if(file.size>8*1024*1024){status.textContent="Image must be 8MB or smaller.";return;}
 
   status.textContent="Uploading...";
-  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
-  const path=`${item.folder}/${key}-${Date.now()}.${ext}`;
-  const {error:uploadError}=await client.storage.from("site-images").upload(path,file,{contentType:file.type,upsert:false});
-  if(uploadError){status.textContent="Upload failed: "+uploadError.message;return;}
+  const formData=new FormData();
+  formData.append("key",key);
+  formData.append("folder",item.folder);
+  formData.append("file",file,file.name);
 
-  const {data:urlData}=client.storage.from("site-images").getPublicUrl(path);
-  const url=urlData.publicUrl;
-  const {error:saveError}=await client.from("site_settings").upsert({key,value:url,updated_at:new Date().toISOString()});
-  if(saveError){status.textContent="Image uploaded, but setting failed: "+saveError.message;return;}
+  const {data,error}=await client.functions.invoke("upload-site-image",{body:formData});
+  if(error){
+    status.textContent="Upload failed: "+(error.message||"Unable to upload image.");
+    return;
+  }
+  if(!data||!data.ok){
+    status.textContent="Upload failed: "+(data?.error||"Unable to upload image.");
+    return;
+  }
 
   status.textContent="Saved.";
   await loadSiteSettings();
