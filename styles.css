@@ -713,9 +713,7 @@ background:
     180deg,
     rgba(245,242,235,0.88),
     rgba(245,242,235,0.65)
-  ),
-  url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=1200&q=85")
-  center / cover;
+  );
 }
 
 .hero h1 {
@@ -1628,9 +1626,7 @@ select {
         180deg,
         rgba(245,242,235,0.91) 0%,
         rgba(245,242,235,0.68) 100%
-      ),
-      url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=1200&q=85")
-      center / cover;
+      );
   }
 
   .hero-content {
