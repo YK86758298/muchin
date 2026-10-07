@@ -179,7 +179,7 @@ async function loadCart(){
         <div class="cart-item-price">${Number(x.price).toFixed(2)} each</div>
         <div class="cart-quantity">
           <button type="button" class="quantity-btn" data-action="minus" data-id="${escapeHtml(x.id)}" ${x.qty<=1?"disabled":""} aria-label="Decrease quantity">−</button>
-          <span class="quantity-value">${x.qty}</span>
+          <input class="quantity-value" type="number" min="1" step="1" inputmode="numeric" value="${x.qty}" data-id="${escapeHtml(x.id)}" aria-label="Quantity for ${escapeHtml(x.name)}">
           <button type="button" class="quantity-btn" data-action="plus" data-id="${escapeHtml(x.id)}" aria-label="Increase quantity">+</button>
         </div>
       </div>
@@ -197,6 +197,21 @@ async function loadCart(){
     else if(item.qty>1)item.qty--;
     saveCart(cart);
     loadCart();
+  });
+  document.querySelectorAll(".quantity-value").forEach(input=>{
+    const commitQuantity=()=>{
+      const cart=getCart();
+      const item=cart.find(x=>x.id===input.dataset.id);
+      if(!item)return;
+      const value=Math.max(1,Math.floor(Number(input.value)||1));
+      item.qty=value;
+      saveCart(cart);
+      loadCart();
+    };
+    input.addEventListener("change",commitQuantity);
+    input.addEventListener("keydown",e=>{
+      if(e.key==="Enter"){e.preventDefault();input.blur();}
+    });
   });
   document.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{
     saveCart(getCart().filter(x=>x.id!==b.dataset.id));
