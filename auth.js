@@ -55,11 +55,7 @@ function reorderItems(payload){
 
 async function cancelOrder(id,number){
   if(!confirm("Cancel order #"+number+"? This can only be done before payment is completed."))return;
-  const {error}=await authClient.from("orders").update({
-    status:"cancelled",
-    cancelled_at:new Date().toISOString(),
-    cancellation_reason:"Cancelled by customer"
-  }).eq("id",id).eq("status","pending");
+  const {error}=await authClient.rpc("cancel_pending_order",{p_order_id:id});
   if(error){
     alert("Unable to cancel this order: "+error.message);
     return;
