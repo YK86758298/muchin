@@ -19,6 +19,7 @@ Deno.serve(async(req)=>{
     const {data:{user},error:userError}=await authClient.auth.getUser();
     if(userError||!user) throw new Error("Authentication required");
     if(!Array.isArray(cart)||!cart.length) throw new Error("Cart is empty");
+    if(!customer||!customer.name||!customer.email||!customer.address||!customer.city||!customer.country) throw new Error("Complete customer information is required");
     const sb=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const ids=cart.map((x:any)=>x.id);
     const {data:products,error}=await sb.from("products").select("id,name,price,stock,active").in("id",ids);
@@ -28,9 +29,10 @@ Deno.serve(async(req)=>{
     const items=[];
     for(const item of cart){
       const p=map.get(item.id);
-      if(!p||!p.active||item.qty<1||item.qty>p.stock) throw new Error(`Invalid product or stock: ${item.id}`);
-      total+=Number(p.price)*Number(item.qty);
-      items.push({product_id:p.id,product_name:p.name,quantity:item.qty,unit_price:p.price});
+      const qty=Number(item.qty);
+      if(!p||!p.active||!Number.isInteger(qty)||qty<1||qty>p.stock) throw new Error(`Invalid product or stock: ${item.id}`);
+      total+=Number(p.price)*qty;
+      items.push({product_id:p.id,product_name:p.name,quantity:qty,unit_price:p.price});
     }
     total=Number(total.toFixed(2));
     const base=Deno.env.get("PAYPAL_ENV")==="live"?"https://api-m.paypal.com":"https://api-m.sandbox.paypal.com";
@@ -46,7 +48,11 @@ Deno.serve(async(req)=>{
       shipping_address:customer.address,city:customer.city,country:customer.country,total,currency:"USD",status:"pending"
     }).select().single();
     if(dbError) throw dbError;
-    await sb.from("order_items").insert(items.map(x=>({...x,order_id:dbOrder.id})));
+    const {error:itemError}=await sb.from("order_items").insert(items.map(x=>({...x,order_id:dbOrder.id})));
+    if(itemError){
+      await sb.from("orders").delete().eq("id",dbOrder.id);
+      throw itemError;
+    }
     return new Response(JSON.stringify({id:order.id}),{headers:{...cors,"Content-Type":"application/json"}});
   }catch(e){return new Response(JSON.stringify({error:String(e)}),{status:400,headers:{...cors,"Content-Type":"application/json"}})}
 });
