@@ -83,16 +83,7 @@ for select to authenticated
 using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
 
 drop policy if exists "users can cancel own pending orders" on public.orders;
-create policy "users can cancel own pending orders" on public.orders
-for update to authenticated
-using ((select auth.uid())=user_id and status='pending')
-with check ((select auth.uid())=user_id and status in ('pending','cancelled'));
-
 drop policy if exists "admins can update orders" on public.orders;
-create policy "admins can update orders" on public.orders
-for update to authenticated
-using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())))
-with check (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
 
 drop policy if exists "users can read own order items" on public.order_items;
 create policy "users can read own order items" on public.order_items
@@ -145,36 +136,68 @@ create policy "admins can delete site images" on storage.objects
 for delete to authenticated
 using (bucket_id='site-images' and exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
 
-create or replace function public.complete_paid_order(p_order_id uuid, p_capture_id text)
-returns boolean
-language plpgsql
-security invoker
-set search_path = public
-as $$
-declare
-  v_order_status text;
-  v_item record;
-  v_new_stock integer;
+
+create or replace function public.cancel_pending_order(p_order_id uuid)
+returns boolean language plpgsql security definer set search_path = public as $
+declare v_user uuid; v_status text;
+begin
+  v_user := auth.uid();
+  if v_user is null then raise exception 'Authentication required'; end if;
+  select status into v_status from public.orders where id=p_order_id and user_id=v_user for update;
+  if not found then raise exception 'Order not found or not owned by current user'; end if;
+  if v_status <> 'pending' then raise exception 'Only pending orders can be cancelled'; end if;
+  update public.orders set status='cancelled', cancelled_at=now(), cancellation_reason='Cancelled by customer' where id=p_order_id;
+  return true;
+end; $;
+
+create or replace function public.admin_update_order(p_order_id uuid,p_status text,p_tracking_number text default null)
+returns boolean language plpgsql security definer set search_path = public as $
+declare v_status text; v_item record;
+begin
+  if auth.uid() is null or not exists (select 1 from public.admin_users where user_id=auth.uid()) then raise exception 'Admin authorization required'; end if;
+  if p_status not in ('pending','paid','shipped','cancelled') then raise exception 'Invalid order status'; end if;
+  select status into v_status from public.orders where id=p_order_id for update;
+  if not found then raise exception 'Order not found'; end if;
+  if p_status=v_status then update public.orders set tracking_number=nullif(trim(coalesce(p_tracking_number,'')),'') where id=p_order_id; return true; end if;
+  if v_status='pending' and p_status='paid' then
+    for v_item in select product_id,quantity from public.order_items where order_id=p_order_id for update loop
+      if v_item.product_id is null or v_item.quantity is null or v_item.quantity<1 then raise exception 'Invalid order item'; end if;
+      update public.products set stock=stock-v_item.quantity where id=v_item.product_id and stock>=v_item.quantity;
+      if not found then raise exception 'Insufficient stock for product %',v_item.product_id; end if;
+    end loop;
+    update public.orders set status='paid',tracking_number=nullif(trim(coalesce(p_tracking_number,'')),'') where id=p_order_id; return true;
+  end if;
+  if v_status='pending' and p_status='cancelled' then
+    update public.orders set status='cancelled',cancelled_at=coalesce(cancelled_at,now()),cancellation_reason=coalesce(cancellation_reason,'Cancelled by admin'),tracking_number=null where id=p_order_id; return true;
+  end if;
+  if v_status='paid' and p_status='shipped' then
+    update public.orders set status='shipped',tracking_number=nullif(trim(coalesce(p_tracking_number,'')),'') where id=p_order_id; return true;
+  end if;
+  raise exception 'Invalid order status transition: % -> %',v_status,p_status;
+end; $;
+
+revoke all on function public.cancel_pending_order(uuid) from public,anon;
+grant execute on function public.cancel_pending_order(uuid) to authenticated;
+revoke all on function public.admin_update_order(uuid,text,text) from public,anon;
+grant execute on function public.admin_update_order(uuid,text,text) to authenticated;
+
+create or replace function public.complete_paid_order(p_order_id uuid,p_capture_id text)
+returns boolean language plpgsql security invoker set search_path=public as $
+declare v_order_status text; v_item record;
 begin
   select status into v_order_status from public.orders where id=p_order_id for update;
   if not found then raise exception 'Order not found'; end if;
   if v_order_status='paid' then return true; end if;
-  if v_order_status<>'pending' then raise exception 'Order is not pending'; end if;
+  if v_order_status not in ('pending','payment_processing') then raise exception 'Order is not payable'; end if;
   for v_item in select product_id,quantity from public.order_items where order_id=p_order_id for update loop
-    if v_item.product_id is null or v_item.quantity is null or v_item.quantity<1 then
-      raise exception 'Invalid order item';
-    end if;
-    update public.products
-    set stock=stock-v_item.quantity
-    where id=v_item.product_id and stock>=v_item.quantity
-    returning stock into v_new_stock;
+    if v_item.product_id is null or v_item.quantity is null or v_item.quantity<1 then raise exception 'Invalid order item'; end if;
+    update public.products set stock=stock-v_item.quantity where id=v_item.product_id and stock>=v_item.quantity;
     if not found then raise exception 'Insufficient stock for product %',v_item.product_id; end if;
   end loop;
   update public.orders set status='paid',paypal_capture_id=p_capture_id where id=p_order_id;
   return true;
-end;
-$$;
-
-revoke all on function public.complete_paid_order(uuid,text) from public, anon, authenticated;
+end; $;
+revoke all on function public.complete_paid_order(uuid,text) from public,anon,authenticated;
 grant execute on function public.complete_paid_order(uuid,text) to service_role;
+
 revoke execute on function public.rls_auto_enable() from anon, authenticated;
