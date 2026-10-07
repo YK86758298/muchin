@@ -30,6 +30,16 @@ async function checkSession(){
 }
 
 async function showAdmin(){
+  const {data:{session}}=await client.auth.getSession();
+  const adminUserId="d1b14f21-8e54-4d16-8df8-b16eda8a1524";
+  if(!session || session.user.id!==adminUserId){
+    await client.auth.signOut();
+    loginBox.style.display="block";
+    adminContent.style.display="none";
+    const formMessage=document.getElementById("login-form");
+    if(formMessage) formMessage.dataset.adminNotice="Please sign in with the authorized admin account.";
+    return;
+  }
   loginBox.style.display="none";
   adminContent.style.display="block";
   await loadSiteSettings();
