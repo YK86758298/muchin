@@ -225,7 +225,6 @@ setupFloatingCart();
 updateCartCount();
 loadProducts();
 loadCart();
-loadSiteSettings();
 
 async function loadSiteSettings(){
   const hero=document.querySelector(".hero");
