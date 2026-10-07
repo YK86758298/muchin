@@ -32,6 +32,7 @@ async function checkSession(){
 async function showAdmin(){
   loginBox.style.display="none";
   adminContent.style.display="block";
+  await loadSiteSettings();
   await loadProducts();
   await loadOrders();
 }
@@ -161,6 +162,71 @@ window.deleteProduct=async function(id){
   if(error){alert(error.message);return;}
   await loadProducts();
 };
+
+
+const SITE_IMAGE_SETTINGS = [
+  {key:"hero_image", label:"Hero Main Image", folder:"hero"},
+  {key:"category_paper_napkin", label:"Paper Napkins", folder:"categories"},
+  {key:"category_paper_cup", label:"Paper Cups", folder:"categories"},
+  {key:"category_paper_plate", label:"Paper Plates", folder:"categories"},
+  {key:"category_paper_bag", label:"Paper Bags", folder:"categories"},
+  {key:"category_paper_tablecloth", label:"Paper Tablecloths", folder:"categories"},
+  {key:"category_plastic_tablecloth", label:"Plastic Tablecloths", folder:"categories"},
+  {key:"category_paper_banner", label:"Paper Banners", folder:"categories"},
+  {key:"category_paper_hat", label:"Paper Hats", folder:"categories"}
+];
+
+async function loadSiteSettings(){
+  const grid=document.getElementById("site-settings-grid");
+  if(!grid)return;
+  const {data,error}=await client.from("site_settings").select("key,value");
+  if(error){grid.innerHTML='<div class="card"><p>Unable to load website settings.</p></div>';return;}
+  const settings=Object.fromEntries((data||[]).map(x=>[x.key,x.value]));
+  grid.innerHTML=SITE_IMAGE_SETTINGS.map(item=>{
+    const url=settings[item.key]||"";
+    return `
+      <div class="card site-setting-card">
+        <div class="site-setting-preview">
+          ${url ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(item.label)}">` : '<span>No image uploaded</span>'}
+        </div>
+        <div class="site-setting-body">
+          <p class="eyebrow">${escapeHtml(item.folder)}</p>
+          <h3>${escapeHtml(item.label)}</h3>
+          <input type="file" accept="image/*" data-site-file="${escapeHtml(item.key)}">
+          <button class="small-btn site-upload-btn" type="button" data-site-upload="${escapeHtml(item.key)}">Upload image</button>
+          <span class="site-setting-status" data-site-status="${escapeHtml(item.key)}"></span>
+        </div>
+      </div>`;
+  }).join("");
+
+  grid.querySelectorAll("[data-site-upload]").forEach(btn=>{
+    btn.addEventListener("click",()=>uploadSiteImage(btn.dataset.siteUpload));
+  });
+}
+
+async function uploadSiteImage(key){
+  const item=SITE_IMAGE_SETTINGS.find(x=>x.key===key);
+  const input=document.querySelector(`[data-site-file="${key}"]`);
+  const status=document.querySelector(`[data-site-status="${key}"]`);
+  const file=input?.files?.[0];
+  if(!item||!file){if(status)status.textContent="Choose an image first.";return;}
+  if(!file.type.startsWith("image/")){status.textContent="Please choose an image file.";return;}
+  if(file.size>8*1024*1024){status.textContent="Image must be 8MB or smaller.";return;}
+
+  status.textContent="Uploading...";
+  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const path=`${item.folder}/${key}-${Date.now()}.${ext}`;
+  const {error:uploadError}=await client.storage.from("site-images").upload(path,file,{contentType:file.type,upsert:false});
+  if(uploadError){status.textContent="Upload failed: "+uploadError.message;return;}
+
+  const {data:urlData}=client.storage.from("site-images").getPublicUrl(path);
+  const url=urlData.publicUrl;
+  const {error:saveError}=await client.from("site_settings").upsert({key,value:url,updated_at:new Date().toISOString()});
+  if(saveError){status.textContent="Image uploaded, but setting failed: "+saveError.message;return;}
+
+  status.textContent="Saved.";
+  await loadSiteSettings();
+}
 
 async function loadOrders(){
   const {data,error}=await client.from("orders").select("*").order("created_at",{ascending:false});
