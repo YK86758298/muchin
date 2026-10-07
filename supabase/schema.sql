@@ -7,8 +7,10 @@ create table if not exists public.products (
   price numeric(12,2) not null check (price >= 0),
   image_url text,
   stock integer not null default 0,
-  active boolean not null default true,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  category text not null default 'Other',
+  best_seller boolean not null default false,
+  active boolean not null default true
 );
 
 create table if not exists public.orders (
@@ -24,7 +26,11 @@ create table if not exists public.orders (
   total numeric(12,2) not null,
   currency text not null default 'USD',
   status text not null default 'pending',
-  created_at timestamptz not null default now()
+  user_id uuid references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  cancelled_at timestamptz,
+  cancellation_reason text,
+  tracking_number text
 );
 
 create table if not exists public.order_items (
@@ -32,7 +38,7 @@ create table if not exists public.order_items (
   order_id uuid not null references public.orders(id) on delete cascade,
   product_id uuid references public.products(id),
   product_name text not null,
-  quantity integer not null,
+  quantity integer not null check (quantity > 0),
   unit_price numeric(12,2) not null
 );
 
@@ -40,25 +46,135 @@ create table if not exists public.admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade
 );
 
+create table if not exists public.site_settings (
+  key text primary key,
+  value text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists order_items_order_id_idx on public.order_items(order_id);
+create index if not exists order_items_product_id_idx on public.order_items(product_id);
+
 alter table public.products enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 alter table public.admin_users enable row level security;
+alter table public.site_settings enable row level security;
 
+drop policy if exists "public can read active products" on public.products;
 create policy "public can read active products" on public.products
-for select using (active = true);
+for select to anon, authenticated
+using (active = true);
 
+drop policy if exists "admins can manage products" on public.products;
+create policy "admins can manage products" on public.products
+for all to authenticated
+using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())))
+with check (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+drop policy if exists "users can read own orders" on public.orders;
+create policy "users can read own orders" on public.orders
+for select to authenticated
+using ((select auth.uid())=user_id);
+
+drop policy if exists "admins can read orders" on public.orders;
 create policy "admins can read orders" on public.orders
-for select using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
+for select to authenticated
+using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
 
+drop policy if exists "users can cancel own pending orders" on public.orders;
+create policy "users can cancel own pending orders" on public.orders
+for update to authenticated
+using ((select auth.uid())=user_id and status='pending')
+with check ((select auth.uid())=user_id and status in ('pending','cancelled'));
+
+drop policy if exists "admins can update orders" on public.orders;
+create policy "admins can update orders" on public.orders
+for update to authenticated
+using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())))
+with check (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+drop policy if exists "users can read own order items" on public.order_items;
+create policy "users can read own order items" on public.order_items
+for select to authenticated
+using (exists (select 1 from public.orders o where o.id=order_id and o.user_id=(select auth.uid())));
+
+drop policy if exists "admins can read order items" on public.order_items;
 create policy "admins can read order items" on public.order_items
-for select using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
+for select to authenticated
+using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
 
-insert into public.products(name,description,price,image_url,stock)
-values
-('Sample Product','Replace this with your own product.',29.00,'https://placehold.co/700x700?text=Product+1',100),
-('Sample Product 2','Another sample product.',39.00,'https://placehold.co/700x700?text=Product+2',100)
-on conflict do nothing;
+drop policy if exists "admins can read own admin record" on public.admin_users;
+create policy "admins can read own admin record" on public.admin_users
+for select to authenticated
+using ((select auth.uid())=user_id);
 
+drop policy if exists "public can read site settings" on public.site_settings;
+create policy "public can read site settings" on public.site_settings
+for select to anon, authenticated
+using (true);
 
-create table if not exists public.site_settings(id boolean primary key default true,brand_name text not null default 'MAISON TABLE',hero_title text not null default 'Beautiful moments start at the table.',hero_subtitle text,hero_image_url text,philosophy_title text,philosophy_text text,category1_name text default 'Napkins',category1_image_url text,category2_name text default 'Cups',category2_image_url text,category3_name text default 'Plates',category3_image_url text,updated_at timestamptz not null default now());insert into public.site_settings(id) values(true) on conflict(id) do nothing;alter table public.site_settings enable row level security;drop policy if exists "Public can view site settings" on public.site_settings;create policy "Public can view site settings" on public.site_settings for select using(true);drop policy if exists "Admins can update site settings" on public.site_settings;create policy "Admins can update site settings" on public.site_settings for update to authenticated using(exists(select 1 from public.admin_users a where a.user_id=auth.uid())) with check(exists(select 1 from public.admin_users a where a.user_id=auth.uid()));drop policy if exists "Admins can insert site settings" on public.site_settings;create policy "Admins can insert site settings" on public.site_settings for insert to authenticated with check(exists(select 1 from public.admin_users a where a.user_id=auth.uid()));insert into storage.buckets(id,name,public) values('site-images','site-images',true) on conflict(id) do update set public=true;drop policy if exists "Public can view site images" on storage.objects;create policy "Public can view site images" on storage.objects for select using(bucket_id='site-images');drop policy if exists "Admins can upload site images" on storage.objects;create policy "Admins can upload site images" on storage.objects for insert to authenticated with check(bucket_id='site-images' and exists(select 1 from public.admin_users a where a.user_id=auth.uid()));drop policy if exists "Admins can delete site images" on storage.objects;create policy "Admins can delete site images" on storage.objects for delete to authenticated using(bucket_id='site-images' and exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
+drop policy if exists "admins can manage site settings" on public.site_settings;
+create policy "admins can manage site settings" on public.site_settings
+for all to authenticated
+using (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())))
+with check (exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+insert into storage.buckets (id,name,public)
+values ('site-images','site-images',true)
+on conflict (id) do update set public=true;
+
+drop policy if exists "public can read site images" on storage.objects;
+create policy "public can read site images" on storage.objects
+for select to anon, authenticated
+using (bucket_id='site-images');
+
+drop policy if exists "admins can upload site images" on storage.objects;
+create policy "admins can upload site images" on storage.objects
+for insert to authenticated
+with check (bucket_id='site-images' and exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+drop policy if exists "admins can update site images" on storage.objects;
+create policy "admins can update site images" on storage.objects
+for update to authenticated
+using (bucket_id='site-images' and exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())))
+with check (bucket_id='site-images' and exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+drop policy if exists "admins can delete site images" on storage.objects;
+create policy "admins can delete site images" on storage.objects
+for delete to authenticated
+using (bucket_id='site-images' and exists (select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+create or replace function public.complete_paid_order(p_order_id uuid, p_capture_id text)
+returns boolean
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  v_order_status text;
+  v_item record;
+  v_new_stock integer;
+begin
+  select status into v_order_status from public.orders where id=p_order_id for update;
+  if not found then raise exception 'Order not found'; end if;
+  if v_order_status='paid' then return true; end if;
+  if v_order_status<>'pending' then raise exception 'Order is not pending'; end if;
+  for v_item in select product_id,quantity from public.order_items where order_id=p_order_id for update loop
+    if v_item.product_id is null or v_item.quantity is null or v_item.quantity<1 then
+      raise exception 'Invalid order item';
+    end if;
+    update public.products
+    set stock=stock-v_item.quantity
+    where id=v_item.product_id and stock>=v_item.quantity
+    returning stock into v_new_stock;
+    if not found then raise exception 'Insufficient stock for product %',v_item.product_id; end if;
+  end loop;
+  update public.orders set status='paid',paypal_capture_id=p_capture_id where id=p_order_id;
+  return true;
+end;
+$$;
+
+revoke all on function public.complete_paid_order(uuid,text) from public, anon, authenticated;
+grant execute on function public.complete_paid_order(uuid,text) to service_role;
+revoke execute on function public.rls_auto_enable() from anon, authenticated;
