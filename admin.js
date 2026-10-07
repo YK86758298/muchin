@@ -88,10 +88,10 @@ async function loadProducts(){
 }
 
 
-const PRODUCT_CSV_HEADERS=["name","description","price","stock","category","image_url","best_seller","active"];
+const PRODUCT_CSV_HEADERS=["name","description","price","stock","category","image_url","image_file","best_seller","active"];
 
 document.getElementById("download-products-template")?.addEventListener("click",function(){
-  const csv=PRODUCT_CSV_HEADERS.join(",")+"\n"+"Example Floral Napkin,Beautiful printed paper napkin,8.90,100,Paper Napkin,https://example.com/image.jpg,true,true\n";
+  const csv=PRODUCT_CSV_HEADERS.join(",")+"\n"+"Example Floral Napkin,Beautiful printed paper napkin,8.90,100,Paper Napkin,,floral-napkin.jpg,true,true\n";
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
@@ -100,6 +100,28 @@ document.getElementById("download-products-template")?.addEventListener("click",
   a.click();
   URL.revokeObjectURL(url);
 });
+
+const bulkImagePicker=document.createElement("input");
+bulkImagePicker.type="file";
+bulkImagePicker.accept="image/*";
+bulkImagePicker.multiple=true;
+bulkImagePicker.style.display="none";
+bulkImagePicker.id="bulk-image-picker";
+document.body.appendChild(bulkImagePicker);
+const bulkImportControls=document.querySelector(".bulk-import-controls");
+if(bulkImportControls){
+  const pickImagesButton=document.createElement("button");
+  pickImagesButton.type="button";
+  pickImagesButton.className="btn btn-outline";
+  pickImagesButton.textContent="Select Product Images";
+  pickImagesButton.addEventListener("click",()=>bulkImagePicker.click());
+  bulkImportControls.insertBefore(pickImagesButton,document.getElementById("import-products-btn"));
+  const imageStatus=document.createElement("span");
+  imageStatus.id="bulk-image-status";
+  imageStatus.className="site-setting-status";
+  bulkImagePicker.addEventListener("change",()=>imageStatus.textContent=bulkImagePicker.files.length+" image(s) selected.");
+  bulkImportControls.appendChild(imageStatus);
+}
 
 document.getElementById("import-products-btn")?.addEventListener("click",async function(){
   const input=document.getElementById("products-csv-file");
@@ -116,6 +138,8 @@ document.getElementById("import-products-btn")?.addEventListener("click",async f
     if(missing.length)throw new Error("Missing columns: "+missing.join(", "));
     const products=[];
     const errors=[];
+    const imageFiles=Array.from(document.getElementById("bulk-image-picker")?.files||[]);
+    const imageMap=new Map(imageFiles.map(file=>[file.name,file]));
     for(let i=1;i<rows.length;i++){
       const row=rows[i];
       if(row.every(v=>!String(v||"").trim()))continue;
@@ -135,13 +159,28 @@ document.getElementById("import-products-btn")?.addEventListener("click",async f
         stock,
         category,
         image_url:obj.image_url||"",
+        image_file:obj.image_file||"",
         best_seller:parseCSVBoolean(obj.best_seller,false),
         active:parseCSVBoolean(obj.active,true)
       });
     }
     if(errors.length)throw new Error(errors.slice(0,8).join(" ")+(errors.length>8?" And "+(errors.length-8)+" more errors.":""));
     if(!products.length)throw new Error("No valid products found.");
-    message.textContent="Importing "+products.length+" products...";
+    message.textContent="Uploading images and importing "+products.length+" products...";
+    for(const product of products){
+      if(product.image_file){
+        const file=imageMap.get(product.image_file);
+        if(!file) throw new Error("Image not found for \""+product.name+"\": "+product.image_file);
+        const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+        const base=(product.name||"product").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"product";
+        const path="products/"+base+"-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+        const {error:uploadError}=await client.storage.from("site-images").upload(path,file,{contentType:file.type,upsert:false});
+        if(uploadError) throw new Error("Image upload failed for "+product.name+": "+uploadError.message);
+        const {data:publicData}=client.storage.from("site-images").getPublicUrl(path);
+        product.image_url=publicData.publicUrl;
+      }
+      delete product.image_file;
+    }
     const chunkSize=100;
     for(let i=0;i<products.length;i+=chunkSize){
       const chunk=products.slice(i,i+chunkSize);
@@ -150,6 +189,10 @@ document.getElementById("import-products-btn")?.addEventListener("click",async f
     }
     message.textContent="Imported "+products.length+" products successfully.";
     input.value="";
+    const imagePicker=document.getElementById("bulk-image-picker");
+    if(imagePicker) imagePicker.value="";
+    const imageStatus=document.getElementById("bulk-image-status");
+    if(imageStatus) imageStatus.textContent="";
     await loadProducts();
   }catch(error){
     console.error(error);
