@@ -15,7 +15,7 @@ Deno.serve(async(req)=>{if(req.method==="OPTIONS")return new Response("ok",{head
  const capture=result?.purchase_units?.[0]?.payments?.captures?.[0];
  const capturedAmount=Number(capture?.amount?.value);
  if(capture?.status!=="COMPLETED"||capture?.amount?.currency_code!==pendingOrder.currency||!Number.isFinite(capturedAmount)||capturedAmount!==Number(pendingOrder.total)) throw new Error("PayPal capture validation failed");
- const {data:updated,error:updateError}=await sb.from("orders").update({status:"paid",paypal_capture_id:capture.id}).eq("id",pendingOrder.id).eq("status","pending").select("id").maybeSingle();
- if(updateError||!updated) throw new Error("Order not found or not owned by current user");
+ const {data:completed,error:completeError}=await sb.rpc("complete_paid_order",{p_order_id:pendingOrder.id,p_capture_id:capture.id});
+ if(completeError||completed!==true) throw new Error(completeError?.message||"Unable to complete order inventory update");
  return new Response(JSON.stringify({ok:true,result}),{headers:{...cors,"Content-Type":"application/json"}});
 }catch(e){return new Response(JSON.stringify({error:String(e)}),{status:400,headers:{...cors,"Content-Type":"application/json"}})}});
