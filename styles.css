@@ -2685,6 +2685,7 @@ body.admin-page,
   background-position:center;
   background-size:contain;
   background-repeat:no-repeat;
+  border-bottom:1px solid var(--line);
 }
 .category-card-image:not(.has-image){
   background:#fff;
