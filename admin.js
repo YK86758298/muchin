@@ -419,6 +419,7 @@ async function loadOrders(){
           <div class="admin-order-field">
             <label for="status-${safeId}">Order status</label>
             <select id="status-${safeId}" data-order-status="${safeId}">
+              <option value="payment_processing" ${status==="payment_processing"?"selected":""} disabled>Payment processing</option>
               <option value="pending" ${status==="pending"?"selected":""}>Pending</option>
               <option value="paid" ${status==="paid"?"selected":""}>Paid</option>
               <option value="shipped" ${status==="shipped"?"selected":""}>Shipped</option>
