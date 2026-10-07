@@ -122,8 +122,7 @@ rgba(245,242,235,0.98) 0%,
 rgba(245,242,235,0.85) 38%,
 rgba(245,242,235,0.2) 75%
 ),
-url("https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=2000&q=85")
-center / cover;
+
 }
 
 .hero-content {
