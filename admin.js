@@ -87,6 +87,104 @@ async function loadProducts(){
   }).join("");
 }
 
+
+const PRODUCT_CSV_HEADERS=["name","description","price","stock","category","image_url","best_seller","active"];
+
+document.getElementById("download-products-template")?.addEventListener("click",function(){
+  const csv=PRODUCT_CSV_HEADERS.join(",")+"\n"+"Example Floral Napkin,Beautiful printed paper napkin,8.90,100,Paper Napkin,https://example.com/image.jpg,true,true\n";
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="muchin-products-template.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("import-products-btn")?.addEventListener("click",async function(){
+  const input=document.getElementById("products-csv-file");
+  const message=document.getElementById("bulk-import-message");
+  const file=input?.files?.[0];
+  if(!file){message.textContent="Choose a CSV file first.";return;}
+  message.textContent="Reading CSV...";
+  try{
+    const text=await file.text();
+    const rows=parseCSV(text.replace(/^\\uFEFF/,""));
+    if(rows.length<2)throw new Error("The CSV must contain a header row and at least one product.");
+    const headers=rows[0].map(x=>x.trim().toLowerCase());
+    const missing=PRODUCT_CSV_HEADERS.filter(h=>!headers.includes(h));
+    if(missing.length)throw new Error("Missing columns: "+missing.join(", "));
+    const products=[];
+    const errors=[];
+    for(let i=1;i<rows.length;i++){
+      const row=rows[i];
+      if(row.every(v=>!String(v||"").trim()))continue;
+      const obj={}; headers.forEach((h,idx)=>obj[h]=String(row[idx]??"").trim());
+      const line=i+1;
+      const name=obj.name;
+      const price=Number(obj.price);
+      const stock=Number(obj.stock||0);
+      const category=obj.category||"Other";
+      if(!name){errors.push("Line "+line+": name is required.");continue;}
+      if(!Number.isFinite(price)||price<0){errors.push("Line "+line+": invalid price.");continue;}
+      if(!Number.isInteger(stock)||stock<0){errors.push("Line "+line+": stock must be a whole number.");continue;}
+      products.push({
+        name,
+        description:obj.description||"",
+        price,
+        stock,
+        category,
+        image_url:obj.image_url||"",
+        best_seller:parseCSVBoolean(obj.best_seller,false),
+        active:parseCSVBoolean(obj.active,true)
+      });
+    }
+    if(errors.length)throw new Error(errors.slice(0,8).join(" ")+(errors.length>8?" And "+(errors.length-8)+" more errors.":""));
+    if(!products.length)throw new Error("No valid products found.");
+    message.textContent="Importing "+products.length+" products...";
+    const chunkSize=100;
+    for(let i=0;i<products.length;i+=chunkSize){
+      const chunk=products.slice(i,i+chunkSize);
+      const {error}=await client.from("products").insert(chunk);
+      if(error)throw error;
+    }
+    message.textContent="Imported "+products.length+" products successfully.";
+    input.value="";
+    await loadProducts();
+  }catch(error){
+    console.error(error);
+    message.textContent="Import failed: "+(error.message||String(error));
+  }
+});
+
+function parseCSVBoolean(value,fallback){
+  const v=String(value??"").trim().toLowerCase();
+  if(!v)return fallback;
+  if(["true","1","yes","y"].includes(v))return true;
+  if(["false","0","no","n"].includes(v))return false;
+  return fallback;
+}
+
+function parseCSV(text){
+  const rows=[]; let row=[]; let cell=""; let quoted=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(quoted){
+      if(c==='"'){
+        if(text[i+1]==='"'){cell+='"';i++;}
+        else quoted=false;
+      }else cell+=c;
+    }else{
+      if(c==='"' && cell==="")quoted=true;
+      else if(c===','){row.push(cell);cell="";}
+      else if(c==='\\n'){row.push(cell);rows.push(row);row=[];cell="";}
+      else if(c!=='\\r')cell+=c;
+    }
+  }
+  row.push(cell); rows.push(row);
+  return rows;
+}
+
 document.getElementById("add-product-btn").addEventListener("click",function(){
   editingProductId=null;
   document.getElementById("product-form").reset();
