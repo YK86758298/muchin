@@ -19,6 +19,7 @@ async function getPayPalOrder(base:string,t:string,id:string){
 Deno.serve(async(req)=>{
   if(req.method==="OPTIONS") return new Response("ok",{headers:cors});
   let orderId:string|undefined;
+  let paymentCaptured=false;
   try{
     ({paypal_order_id:orderId}=await req.json());
     const authHeader=req.headers.get("Authorization"); if(!authHeader) throw new Error("Authentication required");
@@ -54,11 +55,12 @@ Deno.serve(async(req)=>{
     const capture=result?.purchase_units?.[0]?.payments?.captures?.[0];
     const capturedAmount=Number(capture?.amount?.value);
     if(capture?.status!=="COMPLETED"||capture?.amount?.currency_code!==order.currency||!Number.isFinite(capturedAmount)||capturedAmount!==Number(order.total)) throw new Error("PayPal capture validation failed");
+    paymentCaptured=true;
     const {data:completed,error:completeError}=await sb.rpc("complete_paid_order",{p_order_id:order.id,p_capture_id:capture.id});
     if(completeError||completed!==true) throw new Error(completeError?.message||"Unable to complete order inventory update");
     return new Response(JSON.stringify({ok:true}),{headers:{...cors,"Content-Type":"application/json"}});
   }catch(e){
-    if(orderId){
+    if(orderId && !paymentCaptured){
       try{
         const sb=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
         await sb.from("orders").update({status:"pending"}).eq("paypal_order_id",orderId).eq("status","payment_processing");
