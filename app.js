@@ -225,8 +225,11 @@ async function loadSiteSettings(){
   imageSlots.forEach(el=>{
     const url=settings[el.dataset.siteImage];
     if(url){
+      localStorage.setItem("muchin_"+el.dataset.siteImage,url);
       el.style.backgroundImage=`url("${url}")`;
       el.classList.add("has-image");
     }
   });
 }
+
+loadSiteSettings();
