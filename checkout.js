@@ -11,7 +11,20 @@ async function checkoutInit(){
       if(!form.reportValidity()) throw new Error("Please complete your details.");
       const customer=Object.fromEntries(new FormData(form).entries());
       const {data,error}=await supabaseClient.functions.invoke("create-paypal-order",{body:{cart,customer,user_id:session.user.id}});
-      if(error) throw error; return data.id;
+      if(error){
+        let detail=error.message||"Unable to create PayPal order.";
+        try{
+          if(error.context?.json){
+            const body=await error.context.json();
+            if(body?.error) detail=String(body.error);
+            if(body?.stage) detail+=" [stage: "+body.stage+"]";
+          }
+        }catch{}
+        document.getElementById("checkout-message").textContent=detail;
+        throw new Error(detail);
+      }
+      if(!data?.id) throw new Error("PayPal order ID was not returned.");
+      return data.id;
     },
     onApprove: async (data)=>{
       const {data:result,error}=await supabaseClient.functions.invoke("capture-paypal-order",{body:{paypal_order_id:data.orderID}});
@@ -20,7 +33,7 @@ async function checkoutInit(){
       document.getElementById("checkout-message").textContent="Payment successful. Order received.";
       window.scrollTo(0,0);
     },
-    onError:(err)=>{console.error(err);document.getElementById("checkout-message").textContent="Payment failed. Please try again.";}
+    onError:(err)=>{console.error(err);const el=document.getElementById("checkout-message");if(!el.textContent)el.textContent=err?.message||"Payment failed. Please try again.";}
   }).render("#paypal-button-container");
 }
 checkoutInit();
