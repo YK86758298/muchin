@@ -93,6 +93,19 @@
         </form>
       </div>
 
+      <div class="bulk-import card">
+        <div class="admin-form-heading">
+          <div><p class="eyebrow">Bulk import</p><h3>Import Products from CSV</h3></div>
+          <button id="download-products-template" class="text-button" type="button">Download template</button>
+        </div>
+        <p class="page-intro">Upload one CSV file to add many products at once. Use the template headers exactly. The <strong>image_url</strong> column can contain a public image URL.</p>
+        <div class="bulk-import-controls">
+          <input id="products-csv-file" type="file" accept=".csv,text/csv">
+          <button id="import-products-btn" class="btn" type="button">Import CSV</button>
+        </div>
+        <p id="bulk-import-message" class="admin-settings-message"></p>
+      </div>
+
       <div id="products-admin"></div>
     </section>
 
