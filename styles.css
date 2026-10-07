@@ -2759,3 +2759,21 @@ body.admin-page,
 .bulk-import .page-intro{margin:0 0 16px;max-width:900px}
 .bulk-import-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .bulk-import-controls input[type=file]{max-width:100%}
+
+/* Floating shopping cart */
+.floating-cart{position:fixed;right:28px;bottom:82px;z-index:998;min-width:58px;height:58px;padding:0 15px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);box-shadow:0 8px 26px rgba(0,0,0,.12);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.floating-cart:hover{transform:translateY(-2px);border-color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.floating-cart-icon{width:21px;height:21px;display:flex;align-items:center;justify-content:center}
+.floating-cart-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.floating-cart-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.floating-cart-count{min-width:20px;height:20px;padding:0 5px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--ink);color:var(--white);font-size:10px;font-weight:700;line-height:1}
+.floating-cart:not(.has-items) .floating-cart-count{background:var(--line);color:var(--muted)}
+.cart-item-price{color:var(--muted);font-size:12px}
+.cart-quantity{display:flex;align-items:center;width:max-content;margin-top:10px;border:1px solid var(--line);background:var(--white)}
+.quantity-btn{width:30px;height:30px;padding:0;border:0;background:transparent;color:var(--ink);font-size:17px;line-height:1;cursor:pointer}
+.quantity-btn:hover:not(:disabled){background:var(--cream)}
+.quantity-btn:disabled{color:#bbb;cursor:default}
+.quantity-value{min-width:34px;text-align:center;font-size:12px;font-weight:600}
+.cart-item-actions{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:12px}
+.cart-item-subtotal{font-size:14px;white-space:nowrap}
+@media(max-width:600px){.floating-cart{right:18px;bottom:70px;height:50px;min-width:50px;padding:0 12px}.floating-cart-label{display:none}.cart-item-actions{align-items:flex-end}}
